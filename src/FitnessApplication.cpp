@@ -8,4 +8,3 @@ FitnessApplication::FitnessApplication(QWidget *parent)
 
 FitnessApplication::~FitnessApplication()
 {}
-
