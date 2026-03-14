@@ -16,6 +16,10 @@ public:
     FitnessApplication(QWidget *parent = nullptr);
     ~FitnessApplication();
 
+private slots:
+    // Slot for handling the creation of a new workout log when the corresponding button is clicked.
+    void onCreateWorkoutClicked();
+
 private:
     Ui::FitnessApplicationClass ui;
 };
