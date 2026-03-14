@@ -1,4 +1,5 @@
 #include "Nutrition.h"
+#include <iomanip>
 #include <iostream>
 using namespace std;
 
@@ -9,13 +10,16 @@ double caloriesConsumed): Log(id, date, duration, description),mealType(mealType
 // The computeImpact method for Nutrition calculates the impact of the nutrition log, which could be based on the calories consumed.
 double Nutrition::computeImpact() const
 {
-
+	//Return Calories Consumed
+	return caloriesConsumed;
 }
 
 // The displayLog method for Nutrition provides a way to display the details of the nutrition log, including meal type and calories consumed.
 void Nutrition::displayLog() const
 {
-
+	Log :: displayLog(); //Call Base class Function
+	cout << "Meal Type: " << mealType << endl; // Display Meal Type
+	cout << "Calories Consumed: " << fixed << setprecision(2) << caloriesConsumed << " cals" << endl; // Display Calories Consumed
 }
 
 // Getters for mealType and caloriesConsumed
