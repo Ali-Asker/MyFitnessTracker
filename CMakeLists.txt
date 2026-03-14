@@ -1,0 +1,43 @@
+cmake_minimum_required(VERSION 3.16)
+project(MyFitnessTracker LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Qt auto tools for .ui and .qrc
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_SOURCE_DIR}/ui)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
+
+qt_add_executable(MyFitnessTracker
+    src/main.cpp
+    src/FitnessApplication.cpp
+    src/GUI.cpp
+    src/DataManager.cpp
+    src/Log.cpp
+    src/LogManager.cpp
+    src/Nutrition.cpp
+    src/Workout.cpp
+
+    include/Analytics.h
+    include/DataManager.h
+    include/FitnessApplication.h
+    include/HealthMetric.h
+    include/Log.h
+    include/LogManager.h
+    include/Nutrition.h
+    include/Workout.h
+
+    ui/FitnessApplication.ui
+    ui/FitnessApplication.qrc
+)
+
+target_include_directories(MyFitnessTracker PRIVATE include)
+
+target_link_libraries(MyFitnessTracker
+    PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets
+)
