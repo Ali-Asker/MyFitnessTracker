@@ -2,7 +2,6 @@
 
 #include <iomanip>
 #include <iostream>
-#include <bits/ostream.tcc>
 using namespace std;
 
 // Constructor implementation 
@@ -12,11 +11,10 @@ Log::Log(const string& id, const string& date,double duration,const string& desc
 // Base display method — can be overridden by derived classes for specific formatting
 void Log::displayLog() const
 {
-    cout << "==== Log ====" << endl;
-    cout << "Log ID: " << logID << endl; //Display Log ID
-    cout << "Date: " << date << endl; //Display Date
-    cout << "Duration: " << fixed << setprecision(2) << duration << endl; // Display Duration
-    cout << "Description: " << description << endl; // Display Duration
+   cout << "Log[id =" << id
+    <<", date=" << date
+    << ", duraction=" << fixed << setprecision(2) << duration
+    << ", description=" << description << "]\n"
 
 }
 
