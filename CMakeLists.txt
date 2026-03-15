@@ -34,6 +34,7 @@ qt_add_executable(MyFitnessTracker
 
     ui/FitnessApplication.ui
     ui/FitnessApplication.qrc
+    src/HealthMetric.cpp
 )
 
 target_include_directories(MyFitnessTracker PRIVATE include)

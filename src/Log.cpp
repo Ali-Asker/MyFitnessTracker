@@ -11,10 +11,10 @@ Log::Log(const string& id, const string& date,double duration,const string& desc
 // Base display method — can be overridden by derived classes for specific formatting
 void Log::displayLog() const
 {
-   cout << "Log[id =" << id
+   cout << "Log[id =" << logID
     <<", date=" << date
     << ", duraction=" << fixed << setprecision(2) << duration
-    << ", description=" << description << "]\n"
+         << ", description=" << description << "]\n" ;
 
 }
 
