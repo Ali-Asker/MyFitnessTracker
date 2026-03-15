@@ -3,6 +3,7 @@
 using namespace std;
 
 // Two HealthMetric objects are equal if all their attributes match
+
 bool HealthMetric::operator==(const HealthMetric& other) const
 {
     return metricID == other.metricID &&

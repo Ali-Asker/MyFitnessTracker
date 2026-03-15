@@ -63,6 +63,7 @@ void LogManager::deleteLog(const string& logID)
 }
 
 // Searches for logs that contain the specified keyword in their description and returns a vector of pointers to the matching logs.
+
 // Iterates all logs and checks if the description contains the given keyword using string::find.
 // string::npos is returned by find() when no match exists, so we check against it.
 // Returns raw pointers (Log*) since ownership stays with the logs vector.

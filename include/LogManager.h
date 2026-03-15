@@ -23,6 +23,7 @@ public:
 	void deleteMetric(const std::string& metricID);
 
     // Clears all logs and health metrics from the manager, used before loading fresh data from a file
+
     void clear();
 
 	const std::vector<std::unique_ptr<Log>>& getLogs() const;
