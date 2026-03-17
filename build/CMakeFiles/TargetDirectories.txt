@@ -1,5 +1,0 @@
-C:/Users/josh1/Documents/!school/SEM 4/C++/MyFitnessTracker/build/CMakeFiles/MyFitnessTracker.dir
-C:/Users/josh1/Documents/!school/SEM 4/C++/MyFitnessTracker/build/CMakeFiles/edit_cache.dir
-C:/Users/josh1/Documents/!school/SEM 4/C++/MyFitnessTracker/build/CMakeFiles/rebuild_cache.dir
-C:/Users/josh1/Documents/!school/SEM 4/C++/MyFitnessTracker/build/CMakeFiles/MyFitnessTracker_autogen_timestamp_deps.dir
-C:/Users/josh1/Documents/!school/SEM 4/C++/MyFitnessTracker/build/CMakeFiles/MyFitnessTracker_autogen.dir
