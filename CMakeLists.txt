@@ -16,12 +16,15 @@ find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 qt_add_executable(MyFitnessTracker
     src/main.cpp
     src/FitnessApplication.cpp
-    src/GUI.cpp
     src/DataManager.cpp
     src/Log.cpp
     src/LogManager.cpp
     src/Nutrition.cpp
-    src/Workout.cpp
+    src/Workouts/Workout.cpp
+    src/Workouts/CardioWorkout.cpp
+    src/Workouts/StrengthWorkout.cpp
+    src/Workouts/YogaWorkout.cpp
+    src/HealthMetric.cpp
 
     include/Analytics.h
     include/DataManager.h
@@ -30,14 +33,23 @@ qt_add_executable(MyFitnessTracker
     include/Log.h
     include/LogManager.h
     include/Nutrition.h
-    include/Workout.h
+    include/Workouts/Workout.h
+    include/Workouts/CardioWorkout.h
+    include/Workouts/StrengthWorkout.h
+    include/Workouts/YogaWorkout.h
+
+    src/components/WorkoutCard/WorkoutCard.cpp
+    src/components/WorkoutDialog/WorkoutDialog.cpp
 
     ui/FitnessApplication.ui
     ui/FitnessApplication.qrc
-    src/HealthMetric.cpp
+    ui/WorkoutDialog.ui
 )
 
 target_include_directories(MyFitnessTracker PRIVATE include)
+target_include_directories(MyFitnessTracker PRIVATE include/Workouts)
+target_include_directories(MyFitnessTracker PRIVATE src/components/WorkoutCard)
+target_include_directories(MyFitnessTracker PRIVATE src/components/WorkoutDialog)
 
 target_link_libraries(MyFitnessTracker
     PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets

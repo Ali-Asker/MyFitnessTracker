@@ -1,16 +1,17 @@
 #pragma once
 #include <string>
+#include <QDateTime>
 
 class Log
 {
 private:
     std::string logID;
-    std::string date;
+    QDateTime date;
     double duration;
     std::string description;
 
 public:
-    Log(const std::string& id, const std::string& date,double duration,const std::string& description);
+    Log(const std::string& id, const QDateTime& date, double duration, const std::string& description);
 
     virtual ~Log() = default;
 
@@ -20,12 +21,12 @@ public:
 
     // Getters
     const std::string& getLogID() const;
-    const std::string& getDate() const;
+    const QDateTime& getDate() const;
     double getDuration() const;
     const std::string& getDescription() const;
 
     // Setters 
-    void setDate(const std::string& date);
+    void setDate(const QDateTime& date);
     void setDuration(double duration);
     void setDescription(const std::string& description);
 };

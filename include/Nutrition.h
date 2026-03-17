@@ -2,17 +2,25 @@
 #include <string>
 #include <ostream>
 #include "Log.h"
+#include <QDateTime>
+
+enum class MealType {
+		Breakfast,
+		Lunch,
+		Dinner,
+		Snack
+};
 
 class Nutrition : public Log {
 private:
-	std::string mealType;
+	MealType mealType;
 	double caloriesConsumed;
 public:
 	Nutrition(const std::string& logID,
-              const std::string& date,
+              const QDateTime& date,
               const std::string& description,
               double duration,
-              const std::string& mealType,
+              MealType mealType,
               double caloriesConsumed);
 	// Might be redundant since the base class destructor is virtual, idkkkkk
 	~Nutrition() override = default;
@@ -20,10 +28,10 @@ public:
 	double computeImpact() const override;
 	void displayLog() const override;
 
-	const std::string& getMealType() const;
+	MealType getMealType() const;
 	double getCaloriesConsumed() const;
 
-	void setMealType(const std::string& mealType);
+	void setMealType(MealType mealType);
 	void setCaloriesConsumed(double caloriesConsumed);
 
 	bool operator==(const Nutrition& other) const;
