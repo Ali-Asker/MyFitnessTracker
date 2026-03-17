@@ -18,8 +18,8 @@ public:
 
 private slots:
     // Slot for handling the creation of a new workout log when the corresponding button is clicked.
-    void onCreateWorkoutClicked();
+    void onCreateWorkout();
 
 private:
-    Ui::FitnessApplicationClass ui;
+    Ui::FitnessApplicationClass *ui;
 };
