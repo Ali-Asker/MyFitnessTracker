@@ -1,15 +1,16 @@
+// file author: Josh
 #include "WorkoutCard.h"
+#include <string>
 #include <QLabel>
 #include <QVBoxLayout>
 
-WorkoutCard::WorkoutCard(const QString &name, QWidget *parent)
+WorkoutCard::WorkoutCard(Workout *workout, QWidget *parent)
     : QWidget(parent)
 {
-    auto *layout = new QVBoxLayout(this);
-    auto *label = new QLabel(name, this);
+    layout = new QVBoxLayout(this);
+    nameLabel = new QLabel(QString::fromStdString(workout->getDescription()), this);
+    dateLabel = new QLabel(workout->getDate().toString("MMM dd yyyy"), this);
 
-    setStyleSheet("background-color: #2a2a2a; border-radius: 8px;");
-    setFixedHeight(80);
-
-    layout->addWidget(label);
+    layout->addWidget(nameLabel);
+    layout->addWidget(dateLabel);
 }

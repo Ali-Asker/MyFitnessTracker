@@ -1,5 +1,8 @@
+// file author: Shane
 #include "Workout.h"
-#include <iostream>
+#include <QDebug>
+#include <string>
+#include <QDateTime>
 using namespace std;
 
 namespace {
@@ -21,7 +24,7 @@ namespace {
 }
 
 // Constructor implementation for Workout class, initializing all attributes including those inherited from Log and the specific attributes of Workout.
-Workout::Workout(const std::string& logID, const std::string& date, const std::string& description, double duration, const WorkoutType type, double caloriesBurned)
+Workout::Workout(const std::string& logID, const QDateTime& date, const std::string& description, double duration, const WorkoutType type, double caloriesBurned)
 		: Log(logID, date, duration, description), type(type), caloriesBurned(caloriesBurned) {}
 
 // The computeImpact method for Workout calculates the impact of the workout log, which could be based on the calories burned.
@@ -33,10 +36,10 @@ double Workout::computeImpact() const
 // The displayLog method for Workout provides a way to display the details of the workout log, including workout type and calories burned.
 void Workout::displayLog() const
 {
-	cout << "Workout[type=" << toString(type)
+	qDebug() << "Workout[type=" << toString(type)
          << ", caloriesBurned=" << caloriesBurned
          << ", impact=" << computeImpact()
-         << "]\n";
+         << "]";
 }
 
 // Getters for type and caloriesBurned

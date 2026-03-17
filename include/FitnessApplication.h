@@ -1,7 +1,10 @@
 #pragma once
 
 #include <QtWidgets/QMainWindow>
-#include "ui_FitnessApplication.h"
+
+namespace Ui {
+class FitnessApplicationClass;
+}
 
 // The FitnessApplication class serves as the main window for the fitness tracking application. 
 // It inherits from QMainWindow, which provides a framework for building a GUI application with menus, 

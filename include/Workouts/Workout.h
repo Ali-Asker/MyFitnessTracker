@@ -1,5 +1,7 @@
+// file author: Shane
 #pragma once
 #include <string>
+#include <QDateTime>
 #include <ostream>
 #include "Log.h"
 
@@ -15,7 +17,7 @@ private:
 	double caloriesBurned;
 public:
 	Workout(const std::string& logID,
-            const std::string& date,
+            const QDateTime& date,
             const std::string& description,
             double duration,
             WorkoutType type,
