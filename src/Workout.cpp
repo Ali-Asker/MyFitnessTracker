@@ -9,13 +9,17 @@ Workout::Workout(const string& id, const string& date, double duration, const st
 // The computeImpact method for Workout calculates the impact of the workout log, which could be based on the calories burned.
 double Workout::computeImpact() const
 {
-	
+	return caloriesBurned;
 }
 
 // The displayLog method for Workout provides a way to display the details of the workout log, including workout type and calories burned.
 void Workout::displayLog() const
 {
-	
+	cout << "Workout Log [" << getLogID() << "] "
+		 << getDate() << " | "
+		 << getDescription() << " | Duration: " << getDuration()
+		 << " | Type: " << type
+		 << " | Calories burned: " << caloriesBurned << '\n';
 }
 
 // Getters for type and caloriesBurned
@@ -43,11 +47,24 @@ void Workout::setCaloriesBurned(double caloriesBurned)
 // Equality operator to compare two Workout objects based on their attributes.
 bool Workout::operator==(const Workout& other) const
 {
-
+	return getLogID() == other.getLogID()
+		&& getDate() == other.getDate()
+		&& getDuration() == other.getDuration()
+		&& getDescription() == other.getDescription()
+		&& type == other.type
+		&& caloriesBurned == other.caloriesBurned;
 }
 
 // Overload the stream insertion operator for easy output of Workout details, allowing us to print the workout information in a formatted way.
 ostream& operator<<(ostream& os, const Workout& workout)
 {
-
+	os << "Workout{" 
+	   << "id=" << workout.getLogID()
+	   << ", date=" << workout.getDate()
+	   << ", duration=" << workout.getDuration()
+	   << ", description=" << workout.getDescription()
+	   << ", type=" << workout.getType()
+	   << ", caloriesBurned=" << workout.getCaloriesBurned()
+	   << "}";
+	return os;
 }

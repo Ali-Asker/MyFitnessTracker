@@ -17,6 +17,9 @@
 *.VC.db
 *.opendb
 
+# Qt/CMake build output
+build/
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 

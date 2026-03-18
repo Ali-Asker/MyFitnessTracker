@@ -96,11 +96,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <QtRcc Include="FitnessApplication.qrc"/>
-    <QtUic Include="FitnessApplication.ui"/>
-    <QtMoc Include="FitnessApplication.h"/>
-    <ClCompile Include="FitnessApplication.cpp"/>
-    <ClCompile Include="main.cpp"/>
+    <QtRcc Include="resources\FitnessApplication.qrc"/>
+    <QtUic Include="ui\FitnessApplication.ui"/>
+    <QtMoc Include="include\FitnessApplication.h"/>
+    <ClCompile Include="src\FitnessApplication.cpp"/>
+    <ClCompile Include="src\main.cpp"/>
 
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

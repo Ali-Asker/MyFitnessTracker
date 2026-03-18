@@ -23,16 +23,19 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <QtRcc Include="FitnessApplication.qrc">
+    <QtRcc Include="resources\FitnessApplication.qrc">
       <Filter>Resource Files</Filter>
     </QtRcc>
-    <QtUic Include="FitnessApplication.ui">
+    <QtUic Include="ui\FitnessApplication.ui">
       <Filter>Form Files</Filter>
     </QtUic>
-    <QtMoc Include="FitnessApplication.h">
+    <QtMoc Include="include\FitnessApplication.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <ClCompile Include="FitnessApplication.cpp">
+    <ClCompile Include="src\FitnessApplication.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ResourceCompile Include="$pro_name$.rc">

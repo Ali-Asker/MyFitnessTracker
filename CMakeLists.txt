@@ -24,11 +24,7 @@ qt_add_executable(MyFitnessTracker
     src/Log.cpp
     src/LogManager.cpp
     src/Nutrition.cpp
-    src/HealthMetric.cpp
-    src/Workouts/Workout.cpp
-    src/Workouts/CardioWorkout.cpp
-    src/Workouts/StrengthWorkout.cpp
-    src/Workouts/YogaWorkout.cpp
+    src/Workout.cpp
 
     # Headers
     include/Analytics.h
@@ -38,27 +34,18 @@ qt_add_executable(MyFitnessTracker
     include/Log.h
     include/LogManager.h
     include/Nutrition.h
-    include/Workouts/Workout.h
-    include/Workouts/CardioWorkout.h
-    include/Workouts/StrengthWorkout.h
-    include/Workouts/YogaWorkout.h
+    include/Workout.h
 
-    # Qt Widgets components
-    src/components/WorkoutCard/WorkoutCard.cpp
-    src/components/WorkoutDialog/WorkoutDialog.cpp
+    # Qt Widgets UI
     ui/FitnessApplication.ui
-    ui/WorkoutDialog.ui
 
     # Qt Resources (embeds all QML + assets into the binary)
-    ui/FitnessApplication.qrc
+    resources/FitnessApplication.qrc
     FitnessDesigner/FitnessDesigner.qrc
 )
 
 target_include_directories(MyFitnessTracker PRIVATE
     include
-    include/Workouts
-    src/components/WorkoutCard
-    src/components/WorkoutDialog
 )
 
 target_link_libraries(MyFitnessTracker PRIVATE

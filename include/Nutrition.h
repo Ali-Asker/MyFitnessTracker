@@ -8,9 +8,8 @@ private:
 	std::string mealType;
 	double caloriesConsumed;
 public:
-	Nutrition(const std::string& logID, const std::string& date, const std::string& description, double duration, const std::string& mealType, double caloriesConsumed)
-		: Log(logID, date, description, duration), mealType(mealType), caloriesConsumed(caloriesConsumed) {
-	}
+	Nutrition(const std::string& logID, const std::string& date, double duration, const std::string& description,
+		const std::string& mealType, double caloriesConsumed);
 	// Might be redundant since the base class destructor is virtual, idkkkkk
 	~Nutrition() override = default;
 

@@ -8,9 +8,8 @@ private:
 	std::string type;
 	double caloriesBurned;
 public:
-	Workout(const std::string& logID, const std::string& date, const std::string& description, double duration, const std::string& type, double caloriesBurned)
-		: Log(logID, date, description, duration), type(type), caloriesBurned(caloriesBurned) {
-	}
+	Workout(const std::string& logID, const std::string& date, double duration, const std::string& description,
+		const std::string& type, double caloriesBurned);
 	~Workout() override = default;
 
 	double computeImpact() const override;

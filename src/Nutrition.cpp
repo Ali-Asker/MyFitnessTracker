@@ -9,13 +9,17 @@ double caloriesConsumed): Log(id, date, duration, description),mealType(mealType
 // The computeImpact method for Nutrition calculates the impact of the nutrition log, which could be based on the calories consumed.
 double Nutrition::computeImpact() const
 {
-
+	return caloriesConsumed;
 }
 
 // The displayLog method for Nutrition provides a way to display the details of the nutrition log, including meal type and calories consumed.
 void Nutrition::displayLog() const
 {
-
+	cout << "Nutrition Log [" << getLogID() << "] "
+		 << getDate() << " | "
+		 << getDescription() << " | Duration: " << getDuration()
+		 << " | Meal: " << mealType
+		 << " | Calories: " << caloriesConsumed << '\n';
 }
 
 // Getters for mealType and caloriesConsumed
@@ -38,4 +42,27 @@ void Nutrition::setMealType(const string& mealType)
 void Nutrition::setCaloriesConsumed(double caloriesConsumed)
 {
 	this->caloriesConsumed = caloriesConsumed;
+}
+
+bool Nutrition::operator==(const Nutrition& other) const
+{
+	return getLogID() == other.getLogID()
+		&& getDate() == other.getDate()
+		&& getDuration() == other.getDuration()
+		&& getDescription() == other.getDescription()
+		&& mealType == other.mealType
+		&& caloriesConsumed == other.caloriesConsumed;
+}
+
+ostream& operator<<(ostream& os, const Nutrition& nutrition)
+{
+	os << "Nutrition{" 
+	   << "id=" << nutrition.getLogID()
+	   << ", date=" << nutrition.getDate()
+	   << ", duration=" << nutrition.getDuration()
+	   << ", description=" << nutrition.getDescription()
+	   << ", mealType=" << nutrition.getMealType()
+	   << ", caloriesConsumed=" << nutrition.getCaloriesConsumed()
+	   << "}";
+	return os;
 }
