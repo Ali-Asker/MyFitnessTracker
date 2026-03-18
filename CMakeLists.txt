@@ -4,28 +4,33 @@ project(MyFitnessTracker LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Qt auto tools for .ui and .qrc
+# Qt auto-tools
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_SOURCE_DIR}/ui)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Qml Quick QuickControls2)
 
 qt_add_executable(MyFitnessTracker
+
+    # C++ entry point
     src/main.cpp
+
+    # C++ backend
     src/FitnessApplication.cpp
     src/DataManager.cpp
     src/Log.cpp
     src/LogManager.cpp
     src/Nutrition.cpp
+    src/HealthMetric.cpp
     src/Workouts/Workout.cpp
     src/Workouts/CardioWorkout.cpp
     src/Workouts/StrengthWorkout.cpp
     src/Workouts/YogaWorkout.cpp
-    src/HealthMetric.cpp
 
+    # Headers
     include/Analytics.h
     include/DataManager.h
     include/FitnessApplication.h
@@ -38,19 +43,29 @@ qt_add_executable(MyFitnessTracker
     include/Workouts/StrengthWorkout.h
     include/Workouts/YogaWorkout.h
 
+    # Qt Widgets components
     src/components/WorkoutCard/WorkoutCard.cpp
     src/components/WorkoutDialog/WorkoutDialog.cpp
-
     ui/FitnessApplication.ui
-    ui/FitnessApplication.qrc
     ui/WorkoutDialog.ui
+
+    # Qt Resources (embeds all QML + assets into the binary)
+    ui/FitnessApplication.qrc
+    FitnessDesigner/FitnessDesigner.qrc
 )
 
-target_include_directories(MyFitnessTracker PRIVATE include)
-target_include_directories(MyFitnessTracker PRIVATE include/Workouts)
-target_include_directories(MyFitnessTracker PRIVATE src/components/WorkoutCard)
-target_include_directories(MyFitnessTracker PRIVATE src/components/WorkoutDialog)
+target_include_directories(MyFitnessTracker PRIVATE
+    include
+    include/Workouts
+    src/components/WorkoutCard
+    src/components/WorkoutDialog
+)
 
-target_link_libraries(MyFitnessTracker
-    PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets
+target_link_libraries(MyFitnessTracker PRIVATE
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets
+    Qt6::Qml
+    Qt6::Quick
+    Qt6::QuickControls2
 )

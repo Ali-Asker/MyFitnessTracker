@@ -1,0 +1,28 @@
+<RCC>
+    <qresource prefix="/">
+        <file>FitnessDesigner.qmlproject</file>
+        <file>FitnessDesigner/Constants.qml</file>
+        <file>FitnessDesigner/EventListModel.qml</file>
+        <file>FitnessDesigner/EventListSimulator.qml</file>
+        <file>FitnessDesigner/qmldir</file>
+        <file>FitnessDesignerContent/App.qml</file>
+        <file>FitnessDesignerContent/Screen01.ui.qml</file>
+        <file>qtquickcontrols2.conf</file>
+
+        <!-- Qt Bridge generated components -->
+        <file>FitnessDesignerContent/MyFitnessComponents/HomePage.ui.qml</file>
+        <file>FitnessDesignerContent/MyFitnessComponents/Menu.ui.qml</file>
+        <file>FitnessDesignerContent/MyFitnessComponents/Minimize.ui.qml</file>
+        <file>FitnessDesignerContent/MyFitnessComponents/Minimize_1.ui.qml</file>
+        <file>FitnessDesignerContent/MyFitnessComponents/Minimizer_Minimized.ui.qml</file>
+        <file>FitnessDesignerContent/MyFitnessComponents/Nutrition.ui.qml</file>
+        <file>FitnessDesignerContent/MyFitnessComponents/Nutrition_Minimized.ui.qml</file>
+        <file>FitnessDesignerContent/MyFitnessComponents/Workout.ui.qml</file>
+        <file>FitnessDesignerContent/MyFitnessComponents/Workout_Minimized.ui.qml</file>
+        <file>FitnessDesignerContent/MyFitnessComponents/FullSize.ui.qml</file>
+        <file>FitnessDesignerContent/MyFitnessComponents/Exit.ui.qml</file>
+
+        <!-- Interactive entry point (all behaviour lives here) -->
+        <file>FitnessDesignerContent/MyFitnessComponents/HomePage.qml</file>
+    </qresource>
+</RCC>
