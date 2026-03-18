@@ -25,9 +25,12 @@ void LogManager::editLog(const string& logID)
             string newDate, newDescription;
             double newDuration;
 
-            cout <<"Enter new date: ";
+            cout <<"Enter new date (yyyy-MM-dd hh:mm): ";
             cin >> newDate;
-            log->setDate(newDate);
+            
+            QDateTime date = QDateTime::fromString(QString::fromStdString(newDate), "yyyy-MM-dd hh:mm");
+
+            log->setDate(date);
 
             cout << "Enter new duration: ";
             cin >> newDuration;
@@ -114,7 +117,7 @@ vector<Log*> LogManager::filterByDate(const string& startDate, const string& end
 
     for (const auto& log : logs)
     {
-        const string& date = log->getDate();
+        const string& date = log->getDate().toString("yyyy-MM-dd hh:mm").toStdString();
         if (date >= startDate && date <= endDate)
         {
             results.push_back(log.get());

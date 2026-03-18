@@ -10,9 +10,11 @@ YogaWorkout::YogaWorkout(
     const std::string& description,
     double duration,
     double caloriesBurned,
-    const std::string& style
+    const std::string& style,
+    const std::string& intensity
 ) : Workout(logID, date, description, duration, WorkoutType::Yoga, caloriesBurned),
-    style(style)
+    style(style),
+    intensity(intensity)
 {}
 
 double YogaWorkout::computeImpact() const {
@@ -29,3 +31,6 @@ void YogaWorkout::displayLog() const {
 
 const std::string& YogaWorkout::getStyle() const { return style; }
 void YogaWorkout::setStyle(const std::string& style) { this->style = style; }
+
+const std::string& YogaWorkout::getIntensity() const { return style; }
+void YogaWorkout::setIntensity(const std::string& intensity) { this->style = intensity; }

@@ -17,7 +17,7 @@ ostream& operator<<(ostream& os, const HealthMetric& metric)
 {
     os << "HealthMetric[metricID=" << metric.metricID
        << ", name="  << metric.name
-       << ", date="  << metric.date
+       << ", date="  << metric.date.toString("yyyy-MM-dd hh:mm").toStdString()
        << ", value=" << metric.value
        << "]";
     return os;

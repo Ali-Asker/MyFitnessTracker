@@ -11,8 +11,10 @@ CardioWorkout::CardioWorkout(
     double duration,
     double caloriesBurned,
     double distance,
-    double pace
+    double pace,
+    CardioType cardioType
 ) : Workout(logID, date, description, duration, WorkoutType::Cardio, caloriesBurned),
+    cardioType(CardioType::Distance),
     distance(distance),
     pace(pace)
 {}
@@ -24,14 +26,20 @@ CardioWorkout::CardioWorkout(
     double duration,
     double caloriesBurned,
     int sets,
-    int reps
+    int reps,
+    CardioType cardioType
 ) : Workout(logID, date, description, duration, WorkoutType::Cardio, caloriesBurned),
+    cardioType(CardioType::RepBased),
     sets(sets),
     reps(reps)
 {}
 
 double CardioWorkout::computeImpact() const {
     return getCaloriesBurned() * distance;
+}
+
+CardioType CardioWorkout::getCardioType() const {
+    return cardioType;
 }
 
 void CardioWorkout::displayLog() const {

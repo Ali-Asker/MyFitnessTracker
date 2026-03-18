@@ -75,11 +75,11 @@ Workout* WorkoutDialog::getWorkout() const
         if (ui->distBasedRadio->isChecked()) {
             double distance = ui->distanceInput->text().toDouble();
             double pace = ui->paceInput->text().toDouble();
-            return new CardioWorkout(id, dateTime, description, duration, calories, distance, pace);
+            return new CardioWorkout(id, dateTime, description, duration, calories, distance, pace, CardioType::Distance);
         } else {
             int sets = ui->setsInput->value();
             int reps = ui->repsInput->value();
-            return new CardioWorkout(id, dateTime, description, duration, calories, sets, reps);
+            return new CardioWorkout(id, dateTime, description, duration, calories, sets, reps, CardioType::RepBased);
         }
     } else if (type == WorkoutType::Strength) {
         int sets = ui->setsInput->value();
@@ -88,7 +88,8 @@ Workout* WorkoutDialog::getWorkout() const
         return new StrengthWorkout(id, dateTime, description, duration, calories, sets, reps, weight);
     } else if (type == WorkoutType::Yoga) {
         std::string style = ui->yogaStyleInput->text().toStdString();
-        return new YogaWorkout(id, dateTime, description, duration, calories, style);
+        std::string intensity = ui->yogaIntensityInput->text().toStdString();
+        return new YogaWorkout(id, dateTime, description, duration, calories, style, intensity);
     }
 
     return nullptr;

@@ -12,7 +12,8 @@ public:
         const std::string& description,
         double duration,
         double caloriesBurned,
-        const std::string& style
+        const std::string& style,
+        const std::string& intensity
     );
     ~YogaWorkout() override = default;
 
@@ -22,6 +23,10 @@ public:
     const std::string& getStyle() const;
     void setStyle(const std::string& style);
 
+    const std::string& getIntensity() const;
+    void setIntensity(const std::string& intensity);
+
 private:
     std::string style;
+    std::string intensity;
 };

@@ -19,7 +19,8 @@ public:
         double duration,
         double caloriesBurned,
         double distance,
-        double pace
+        double pace,
+        CardioType cardioType
     );
 
     // for rep based cardio like jumping jacks or burpees
@@ -30,7 +31,8 @@ public:
         double duration,
         double caloriesBurned,
         int sets,
-        int reps
+        int reps,
+        CardioType cardioType
     );
 
     ~CardioWorkout() override = default;
