@@ -10,24 +10,35 @@ Window {
     flags: Qt.FramelessWindowHint | Qt.Window
     color: "transparent"
     property string currentPage: "Nutrition"
+    property bool isExpanded: false
+    property var normalGeometry: ({ x: 120, y: 120, width: 1200, height: 768 })
+
+    function toggleExpandedState() {
+        if (!isExpanded) {
+            normalGeometry = { x: appWindow.x, y: appWindow.y, width: appWindow.width, height: appWindow.height }
+            appWindow.x = appWindow.screen.virtualX
+            appWindow.y = appWindow.screen.virtualY
+            appWindow.width = appWindow.screen.width
+            appWindow.height = appWindow.screen.height
+            isExpanded = true
+        } else {
+            appWindow.x = normalGeometry.x
+            appWindow.y = normalGeometry.y
+            appWindow.width = normalGeometry.width
+            appWindow.height = normalGeometry.height
+            isExpanded = false
+        }
+    }
 
     Rectangle {
         id: root
         anchors.fill: parent
         color: "#252525"
         radius: 10
-        property real designWidth: 1920
-        property real designHeight: 1080
-        property real uiScale: Math.min(width / designWidth, height / designHeight)
 
         Item {
             id: baseFrame
-            width: root.designWidth
-            height: root.designHeight
-            anchors.left: parent.left
-            anchors.top: parent.top
-            scale: root.uiScale
-            transformOrigin: Item.TopLeft
+            anchors.fill: parent
 
             // ── Sidebar (Menu.ui.qml) — pinned left, full height ──
             Menu {
@@ -35,7 +46,7 @@ Window {
                 x: 0
                 y: 0
                 width:  259
-                height: 1080
+                height: baseFrame.height
                 // Start in expanded state
                 Component.onCompleted: state = "property_1_Default"
 
@@ -88,14 +99,11 @@ Window {
             // ── Main content area ─────────────────────────────────
             Item {
                 id: contentArea
-                x:      sideMenu.width
-                y:      52          // below window controls
-                width:  baseFrame.width - sideMenu.width
-                height: baseFrame.height - 52
-
-                Behavior on x {
-                    NumberAnimation { duration: 200; easing.type: Easing.InOutQuad }
-                }
+                anchors.left: sideMenu.right
+                anchors.right: baseFrame.right
+                anchors.top: baseFrame.top
+                anchors.bottom: baseFrame.bottom
+                anchors.topMargin: 52          // below window controls
 
                 Rectangle {
                     anchors.fill: parent
@@ -140,8 +148,8 @@ Window {
             // ── Window controls — exact Figma position: left 1704px ──
             Item {
                 id: winControlsArea
-                x:      1704
-                y:      0
+                anchors.right: parent.right
+                anchors.top: parent.top
                 width:  216
                 height: 52
 
@@ -175,15 +183,7 @@ Window {
                     anchors.fill: parent
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        if (appWindow.visibility === Window.Maximized || appWindow.visibility === Window.FullScreen) {
-                            appWindow.showNormal()
-                            appWindow.width = 1200
-                            appWindow.height = 768
-                        } else {
-                            appWindow.showMaximized()
-                        }
-                    }
+                    onClicked: appWindow.toggleExpandedState()
                     onContainsMouseChanged: fullBtn.state = containsMouse ? "property_1_Variant2" : "property_1_Default"
                     onPressedChanged:       fullBtn.state = pressed       ? "property_1_Variant3" : "property_1_Default"
                 }
@@ -210,15 +210,15 @@ Window {
 
             // ── Drag region to move the frameless window ──────────
             MouseArea {
-                x:      sideMenu.width
-                y:      0
-                width:  winControlsArea.x - sideMenu.width
+                anchors.left: sideMenu.right
+                anchors.right: winControlsArea.left
+                anchors.top: baseFrame.top
                 height: 52
                 property point clickPos
                 onPressed:         (mouse) => { clickPos = Qt.point(mouse.x, mouse.y) }
                 onPositionChanged: (mouse) => {
-                    appWindow.x += (mouse.x - clickPos.x) * root.uiScale
-                    appWindow.y += (mouse.y - clickPos.y) * root.uiScale
+                    appWindow.x += mouse.x - clickPos.x
+                    appWindow.y += mouse.y - clickPos.y
                 }
             }
         }

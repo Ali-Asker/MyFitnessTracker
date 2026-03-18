@@ -8,6 +8,7 @@ Rectangle {
     height: 1080
     color: "#191919"
     radius: 10
+    clip: true
     property alias fitness_FreedomText: fitness_Freedom.text
     state: "property_1_Default"
 
@@ -49,7 +50,7 @@ Rectangle {
 
     Rectangle {
         id: title
-        width: 390
+        width: parent.width - 21
         height: 75
         color: "transparent"
         anchors.left: parent.left
