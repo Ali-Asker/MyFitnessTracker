@@ -9,6 +9,11 @@ class LogManager {
 private:
 	std::vector<std::unique_ptr<Log>> logs;
 	std::vector<std::unique_ptr<HealthMetric>> healthMetrics;
+	// A set to track registered log IDs for quick uniqueness checks. 
+	// This allows us to efficiently validate new log IDs without needing to iterate through the logs vector.
+	std::unordered_set<std::string> registeredIDs;
+	// Validates that a log ID is unique and follows the required format (non-empty, max 6 characters).
+	bool validateID(const std::string& id) const;
 
 public:
 	void addLog(std::unique_ptr<Log> log);
@@ -23,7 +28,6 @@ public:
 	void deleteMetric(const std::string& metricID);
 
     // Clears all logs and health metrics from the manager, used before loading fresh data from a file
-
     void clear();
 
 	const std::vector<std::unique_ptr<Log>>& getLogs() const;

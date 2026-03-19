@@ -1,10 +1,11 @@
-#include "FitnessApplication.h"
+#include "GUI.h"
 #include <QtWidgets/QApplication>
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
+	// The main function initializes the QApplication, which is necessary for any Qt application.
     QApplication app(argc, argv);
-    FitnessApplication window;
+    GUI window;
     window.show();
     return app.exec();
 }

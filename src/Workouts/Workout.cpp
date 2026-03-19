@@ -1,4 +1,4 @@
-// file author: Shane
+// File author: Shane
 #include "Workout.h"
 #include <QDebug>
 #include <string>
@@ -7,7 +7,7 @@ using namespace std;
 
 namespace {
 	// Helper method to convert enum to string
-	// Author: Josh
+	// Author: Shane
 	const char* toString(WorkoutType type)
 	{
 		switch (type) {
@@ -18,7 +18,6 @@ namespace {
 		case WorkoutType::Yoga:
 			return "Yoga";
 		}
-
 		return "Unknown";
 	}
 }

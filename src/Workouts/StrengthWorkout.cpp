@@ -1,9 +1,11 @@
-// file author: Josh
+// file author: Shane
 #include "StrengthWorkout.h"
 #include <QDebug>
 #include <string>
 #include <QDateTime>
 
+// Constructor for StrengthWorkout, initializing all attributes including those inherited 
+// from Workout and the specific attributes of StrengthWorkout related to sets, reps, and weight.
 StrengthWorkout::StrengthWorkout(
     const std::string& logID,
     const QDateTime& date,
@@ -19,10 +21,12 @@ StrengthWorkout::StrengthWorkout(
     weight(weight)
 {}
 
+// The computeImpact method for StrengthWorkout calculates the impact of the strength workout log,
 double StrengthWorkout::computeImpact() const {
     return getCaloriesBurned() * sets * reps;
 }
 
+// The displayLog method for StrengthWorkout provides a way to display the details of the strength workout log,
 void StrengthWorkout::displayLog() const {
    qDebug() << "Strength Workout: " << getDescription()
               << " | Date: " << getDate()
@@ -33,6 +37,7 @@ void StrengthWorkout::displayLog() const {
               << " | Calories: " << getCaloriesBurned();
 }
 
+// Getters and setters for sets, reps, and weight
 int StrengthWorkout::getSets() const { return sets; }
 int StrengthWorkout::getReps() const { return reps; }
 double StrengthWorkout::getWeight() const { return weight; }
