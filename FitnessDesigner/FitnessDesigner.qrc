@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/">
+        <!-- QML UI Files -->
+        <file alias="Main.qml">FitnessDesignerContent/Main.qml</file>
+        <file alias="SideMenuBar.qml">FitnessDesignerContent/SideMenuBar.qml</file>
+        <file alias="HomePage.qml">FitnessDesignerContent/HomePage.ui.qml</file>
+        <file alias="WorkoutPage.qml">FitnessDesignerContent/WorkoutPage.ui.qml</file>
+        <file alias="NutritionPage.qml">FitnessDesignerContent/NutritionPage.ui.qml</file>
+        
+        <!-- Fonts -->
+        <file>FitnessDesignerContent/fonts/poetsenone-regular.ttf</file>
+        <file>FitnessDesignerContent/fonts/inter-extrabold.ttf</file>
+    </qresource>
+</RCC>

@@ -19,6 +19,9 @@ public:
     virtual double computeImpact() const = 0;
     virtual void displayLog() const;
 
+	// Static method to validate log ID format
+    static bool isValidIDFormat(const std::string& id);
+
     // Getters
     const std::string& getLogID() const;
     const QDateTime& getDate() const;
