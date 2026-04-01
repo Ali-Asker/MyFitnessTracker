@@ -6,19 +6,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Qt auto-tools
 set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_SOURCE_DIR}/ui)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Qml Quick QuickControls2)
 
 qt_add_executable(MyFitnessTracker
-
-    # C++ entry point
     src/main.cpp
-
-    # C++ backend
     src/FitnessApplication.cpp
     src/DataManager.cpp
     src/Log.cpp
@@ -29,28 +23,23 @@ qt_add_executable(MyFitnessTracker
     src/Workouts/CardioWorkout.cpp
     src/Workouts/StrengthWorkout.cpp
     src/Workouts/YogaWorkout.cpp
-
-    # Headers
-    include/Analytics.h
-    include/DataManager.h
+    src/components/WorkoutCard/WorkoutCard.cpp
+    src/components/WorkoutDialog/WorkoutDialog.cpp
+    
     include/FitnessApplication.h
-    include/HealthMetric.h
+    include/DataManager.h
     include/Log.h
     include/LogManager.h
     include/Nutrition.h
+    include/HealthMetric.h
+    include/Analytics.h
     include/Workouts/Workout.h
     include/Workouts/CardioWorkout.h
     include/Workouts/StrengthWorkout.h
     include/Workouts/YogaWorkout.h
-
-    # Qt Widgets components
-    src/components/WorkoutCard/WorkoutCard.cpp
-    src/components/WorkoutDialog/WorkoutDialog.cpp
-    ui/FitnessApplication.ui
-    ui/WorkoutDialog.ui
-
-    # Qt Resources (embeds all QML + assets into the binary)
-    ui/FitnessApplication.qrc
+    src/components/WorkoutCard/WorkoutCard.h
+    src/components/WorkoutDialog/WorkoutDialog.h
+    
     FitnessDesigner/FitnessDesigner.qrc
 )
 
