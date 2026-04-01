@@ -13,7 +13,6 @@ using namespace std;
 using json = nlohmann::json;
 
 // Saves the current state of the LogManager to a file specified by filename.
-
 // Iterates through all logs and health metrics in the LogManager, serializes each one
 // into a JSON object, and writes the entire structure to the specified file.
 // Throws a runtime_error if the file cannot be opened for writing.

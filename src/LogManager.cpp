@@ -1,14 +1,29 @@
+// File author: Shane/Phinees/Josh
 #include "LogManager.h"
 #include <iostream>
 #include "Workout.h"     // required for dynamic_cast<Workout*> in filterByType
 #include "Nutrition.h"   // required for dynamic_cast<Nutrition*> in filterByType
-
 using namespace std;
+
+// Validates that a log ID is unique and follows the required format (non-empty, max 6 characters).
+bool LogManager::validateID(const std::string& id) const
+{
+    if (registeredIDs.count(id)) {
+        cerr << "Error: Log ID \"" << id << "\" is already taken.\n";
+        return false;
+    }
+    return true;
+}
 
 // Adds a new log to the LogManager. The log is passed as a unique_ptr to ensure proper memory management. 
 // The function takes ownership of the log and adds it to the logs vector.
+// Before adding, it validates the log ID to ensure it is unique and follows the required format.
 void LogManager::addLog(unique_ptr<Log> log)
 {
+    if (!validateID(log->getLogID())) {
+        return;
+    }
+    registeredIDs.insert(log->getLogID());
     logs.push_back(std::move(log));
 }
 
@@ -66,7 +81,6 @@ void LogManager::deleteLog(const string& logID)
 }
 
 // Searches for logs that contain the specified keyword in their description and returns a vector of pointers to the matching logs.
-
 // Iterates all logs and checks if the description contains the given keyword using string::find.
 // string::npos is returned by find() when no match exists, so we check against it.
 // Returns raw pointers (Log*) since ownership stays with the logs vector.
