@@ -13,7 +13,7 @@ find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Qml Quick QuickControls2)
 
 qt_add_executable(MyFitnessTracker
     src/main.cpp
-    src/FitnessApplication.cpp
+
     src/DataManager.cpp
     src/Log.cpp
     src/LogManager.cpp
@@ -26,7 +26,6 @@ qt_add_executable(MyFitnessTracker
     src/components/WorkoutCard/WorkoutCard.cpp
     src/components/WorkoutDialog/WorkoutDialog.cpp
     
-    include/FitnessApplication.h
     include/DataManager.h
     include/Log.h
     include/LogManager.h
