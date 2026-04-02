@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Shapes
 import QtQuick.Layouts
+import QtQuick.Controls
 
 Rectangle {
     id: homePage
@@ -189,7 +190,10 @@ Rectangle {
                         anchors.fill: parent
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
-                        onClicked: homePage.widgetCount++
+                        // Signal handler: onClicked is triggered when mouse is clicked
+                        onClicked: {
+                            widgetSelectionPopup.open()
+                        }
                     }
                 }
 
@@ -209,6 +213,266 @@ Rectangle {
                 color: "#004a7c"
                 radius: 5
             }
+        }
+    }
+
+    // Widget Selection Popup - triggered by signal handler above
+    Popup {
+        id: widgetSelectionPopup
+        anchors.centerIn: parent
+        width: 500
+        height: 400
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+
+        // Popup background
+        background: Rectangle {
+            color: "#2d2d2d"
+            radius: 10
+            border.color: "#474747"
+            border.width: 2
+        }
+
+        // Popup content
+        ColumnLayout {
+            anchors.fill: parent
+            anchors.margins: 20
+            spacing: 15
+
+            // Title
+            Text {
+                Layout.fillWidth: true
+                text: "Select a Widget to Add"
+                color: "#ffffff"
+                font.family: "PoetsenOne"
+                font.pixelSize: 24
+                horizontalAlignment: Text.AlignHCenter
+            }
+
+            // Grid of 4 widget options
+            GridLayout {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                columns: 2
+                rowSpacing: 15
+                columnSpacing: 15
+
+                // Widget Option 1: Steps Tracker
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    color: widgetMouseArea1.pressed ? "#005a8c" : (widgetMouseArea1.containsMouse ? "#00578a" : "#004a7c")
+                    radius: 8
+                    border.color: "#006ba0"
+                    border.width: 2
+
+                    Behavior on color { ColorAnimation { duration: 150 } }
+
+                    Column {
+                        anchors.centerIn: parent
+                        spacing: 10
+
+                        Text {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: "📊"
+                            font.pixelSize: 48
+                        }
+
+                        Text {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: "Steps Tracker"
+                            color: "#ffffff"
+                            font.family: "PoetsenOne"
+                            font.pixelSize: 16
+                        }
+                    }
+
+                    MouseArea {
+                        id: widgetMouseArea1
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        // Signal handler: handles click on this widget option
+                        onClicked: {
+                            console.log("Steps Tracker widget selected")
+                            homePage.widgetCount++
+                            widgetSelectionPopup.close()
+                        }
+                    }
+                }
+
+                // Widget Option 2: Calorie Counter
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    color: widgetMouseArea2.pressed ? "#7a2f00" : (widgetMouseArea2.containsMouse ? "#8a3500" : "#6b2a00")
+                    radius: 8
+                    border.color: "#9a4000"
+                    border.width: 2
+
+                    Behavior on color { ColorAnimation { duration: 150 } }
+
+                    Column {
+                        anchors.centerIn: parent
+                        spacing: 10
+
+                        Text {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: "🍎"
+                            font.pixelSize: 48
+                        }
+
+                        Text {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: "Calorie Counter"
+                            color: "#ffffff"
+                            font.family: "PoetsenOne"
+                            font.pixelSize: 16
+                        }
+                    }
+
+                    MouseArea {
+                        id: widgetMouseArea2
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        // Signal handler: handles click on this widget option
+                        onClicked: {
+                            console.log("Calorie Counter widget selected")
+                            homePage.widgetCount++
+                            widgetSelectionPopup.close()
+                        }
+                    }
+                }
+
+                // Widget Option 3: Heart Rate Monitor
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    color: widgetMouseArea3.pressed ? "#7a0030" : (widgetMouseArea3.containsMouse ? "#8a0035" : "#6b002a")
+                    radius: 8
+                    border.color: "#9a0040"
+                    border.width: 2
+
+                    Behavior on color { ColorAnimation { duration: 150 } }
+
+                    Column {
+                        anchors.centerIn: parent
+                        spacing: 10
+
+                        Text {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: "❤️"
+                            font.pixelSize: 48
+                        }
+
+                        Text {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: "Heart Rate"
+                            color: "#ffffff"
+                            font.family: "PoetsenOne"
+                            font.pixelSize: 16
+                        }
+                    }
+
+                    MouseArea {
+                        id: widgetMouseArea3
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        // Signal handler: handles click on this widget option
+                        onClicked: {
+                            console.log("Heart Rate Monitor widget selected")
+                            homePage.widgetCount++
+                            widgetSelectionPopup.close()
+                        }
+                    }
+                }
+
+                // Widget Option 4: Water Intake
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    color: widgetMouseArea4.pressed ? "#005a7a" : (widgetMouseArea4.containsMouse ? "#00648a" : "#00506b")
+                    radius: 8
+                    border.color: "#0070a0"
+                    border.width: 2
+
+                    Behavior on color { ColorAnimation { duration: 150 } }
+
+                    Column {
+                        anchors.centerIn: parent
+                        spacing: 10
+
+                        Text {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: "💧"
+                            font.pixelSize: 48
+                        }
+
+                        Text {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: "Water Intake"
+                            color: "#ffffff"
+                            font.family: "PoetsenOne"
+                            font.pixelSize: 16
+                        }
+                    }
+
+                    MouseArea {
+                        id: widgetMouseArea4
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        // Signal handler: handles click on this widget option
+                        onClicked: {
+                            console.log("Water Intake widget selected")
+                            homePage.widgetCount++
+                            widgetSelectionPopup.close()
+                        }
+                    }
+                }
+            }
+
+            // Cancel button
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 45
+                color: cancelMouseArea.pressed ? "#5a5959" : (cancelMouseArea.containsMouse ? "#6a6969" : "#828181")
+                radius: 8
+
+                Behavior on color { ColorAnimation { duration: 150 } }
+
+                Text {
+                    anchors.centerIn: parent
+                    text: "Cancel"
+                    color: "#ffffff"
+                    font.family: "PoetsenOne"
+                    font.pixelSize: 18
+                }
+
+                MouseArea {
+                    id: cancelMouseArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    // Signal handler: handles cancel button click
+                    onClicked: {
+                        widgetSelectionPopup.close()
+                    }
+                }
+            }
+        }
+
+        // Signal handler: triggered when popup is opened
+        onOpened: {
+            console.log("Widget selection popup opened")
+        }
+
+        // Signal handler: triggered when popup is closed
+        onClosed: {
+            console.log("Widget selection popup closed, total widgets:", homePage.widgetCount)
         }
     }
 }
