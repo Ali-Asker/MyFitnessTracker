@@ -49,13 +49,13 @@ Rectangle {
     // SIGNAL HANDLER: Property Change Detection
     // ==========================================
     onCaloriesCurrentChanged: {
-        console.log("📊 Signal: Calories updated to", caloriesCurrent, "/", calorieGoal)
+        console.log("Signal: Calories updated to", caloriesCurrent, "/", calorieGoal)
     }
     
     onStepsTodayChanged: {
-        console.log("👟 Signal: Steps updated to", stepsToday)
+        console.log("Signal: Steps updated to", stepsToday)
         if (stepsToday >= stepsGoal) {
-            console.log("🎉 Congratulations! Step goal reached!")
+            console.log("Congratulations! Step goal reached!")
         }
     }
 
@@ -121,8 +121,8 @@ Rectangle {
             id: header_Widget
 
             Layout.fillWidth: true
-            Layout.fillHeight: true
-            Layout.maximumHeight: parent.height * 0.32
+            Layout.preferredHeight: 220
+            Layout.minimumHeight: 180
 
             color: "#3d3d3d"
             radius: 8
@@ -145,7 +145,7 @@ Rectangle {
                         spacing: 4
 
                         Text {
-                            text: "📅 TODAY"
+                            text: "TODAY"
                             color: "#888888"
                             font.pixelSize: 12
                             font.family: "PoetsenOne"
@@ -176,7 +176,7 @@ Rectangle {
                         spacing: 8
 
                         Text {
-                            text: "🏋️ TODAY'S WORKOUTS"
+                            text: "TODAY'S WORKOUTS"
                             color: "#888888"
                             font.pixelSize: 12
                             font.family: "PoetsenOne"
@@ -225,7 +225,7 @@ Rectangle {
                                     cursorShape: Qt.PointingHandCursor
                                     // Signal handler: View workout details
                                     onClicked: {
-                                        console.log("🏋️ Signal: Workout clicked -", modelData)
+                                        console.log("Signal: Workout clicked -", modelData)
                                     }
                                 }
                             }
@@ -361,7 +361,7 @@ Rectangle {
                         cursorShape: Qt.PointingHandCursor
                         // Signal handler: Click pie chart for details
                         onClicked: {
-                            console.log("🥧 Signal: Pie chart clicked - showing macro details")
+                            console.log("Signal: Pie chart clicked - showing macro details")
                         }
                     }
                 }
@@ -381,7 +381,7 @@ Rectangle {
                     spacing: 8
 
                     Text {
-                        text: "🍽️ NUTRITION GOALS"
+                        text: "NUTRITION GOALS"
                         color: "#888888"
                         font.pixelSize: 12
                         font.family: "PoetsenOne"
@@ -439,6 +439,7 @@ Rectangle {
 
             Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.maximumHeight: 350
 
             spacing: 15
 
@@ -460,22 +461,12 @@ Rectangle {
                     spacing: 12
 
                     // Widget Title
-                    Row {
-                        Layout.fillWidth: true
-                        spacing: 8
-                        
-                        Text {
-                            text: "🏃"
-                            font.pixelSize: 20
-                        }
-                        
-                        Text {
-                            text: "ACTIVITY"
-                            color: "#88c8ff"
-                            font.pixelSize: 14
-                            font.family: "PoetsenOne"
-                            font.letterSpacing: 2
-                        }
+                    Text {
+                        text: "ACTIVITY"
+                        color: "#88c8ff"
+                        font.pixelSize: 14
+                        font.family: "PoetsenOne"
+                        font.letterSpacing: 2
                     }
 
                     // Steps Progress (Main Stat)
@@ -543,7 +534,7 @@ Rectangle {
                         // Calories Burned
                         StatItem {
                             Layout.fillWidth: true
-                            icon: "🔥"
+                            icon: ""
                             value: homePage.caloriesBurned
                             label: "kcal burned"
                             valueColor: "#ff9500"
@@ -552,7 +543,7 @@ Rectangle {
                         // Distance
                         StatItem {
                             Layout.fillWidth: true
-                            icon: "📍"
+                            icon: ""
                             value: homePage.distanceKm
                             label: "km walked"
                             valueColor: "#00ff88"
@@ -562,7 +553,7 @@ Rectangle {
                         // Active Minutes
                         StatItem {
                             Layout.fillWidth: true
-                            icon: "⏱️"
+                            icon: ""
                             value: homePage.activeMinutes
                             label: "active mins"
                             valueColor: "#00d4ff"
@@ -571,7 +562,7 @@ Rectangle {
                         // Floors Climbed (bonus stat)
                         StatItem {
                             Layout.fillWidth: true
-                            icon: "🪜"
+                            icon: ""
                             value: 12
                             label: "floors"
                             valueColor: "#ff6b9d"
@@ -585,7 +576,7 @@ Rectangle {
                     cursorShape: Qt.PointingHandCursor
                     // Signal handler: Click for detailed activity view
                     onClicked: {
-                        console.log("🏃 Signal: Activity widget clicked - Steps:", homePage.stepsToday)
+                        console.log("Signal: Activity widget clicked - Steps:", homePage.stepsToday)
                     }
                 }
             }
@@ -601,8 +592,8 @@ Rectangle {
                     id: widget_blue
 
                     Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    Layout.maximumHeight: parent.height * 0.45
+                    Layout.preferredHeight: 140
+                    Layout.maximumHeight: 160
 
                     color: "#2d5a30"
                     radius: 8
@@ -613,7 +604,7 @@ Rectangle {
                         spacing: 8
 
                         Text {
-                            text: "💪 STREAK"
+                            text: "STREAK"
                             color: "#88ff88"
                             font.pixelSize: 11
                             font.family: "PoetsenOne"
@@ -644,7 +635,7 @@ Rectangle {
                         cursorShape: Qt.PointingHandCursor
                         // Signal handler: Click streak widget
                         onClicked: {
-                            console.log("💪 Signal: Streak widget clicked - 7 day streak!")
+                            console.log("Signal: Streak widget clicked - 7 day streak!")
                         }
                     }
                 }
@@ -665,8 +656,8 @@ Rectangle {
                     id: widget_add
 
                     Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    Layout.maximumHeight: parent.height * 0.45
+                    Layout.preferredHeight: 140
+                    Layout.maximumHeight: 160
 
                     color: addWidgetArea.pressed ? "#5a5959" : (addWidgetArea.containsMouse ? "#929191" : "#828181")
                     radius: 8
@@ -744,7 +735,7 @@ Rectangle {
                         cursorShape: Qt.PointingHandCursor
                         // Signal handler: Opens the widget selection popup
                         onClicked: {
-                            console.log("➕ Signal: Add Widget button clicked")
+                            console.log("Signal: Add Widget button clicked")
                             widgetSelectionPopup.open()
                         }
                     }
@@ -774,22 +765,12 @@ Rectangle {
                     spacing: 12
 
                     // Widget Title
-                    Row {
-                        Layout.fillWidth: true
-                        spacing: 8
-                        
-                        Text {
-                            text: "❤️"
-                            font.pixelSize: 20
-                        }
-                        
-                        Text {
-                            text: "HEALTH"
-                            color: "#ffaacc"
-                            font.pixelSize: 14
-                            font.family: "PoetsenOne"
-                            font.letterSpacing: 2
-                        }
+                    Text {
+                        text: "HEALTH"
+                        color: "#ffaacc"
+                        font.pixelSize: 14
+                        font.family: "PoetsenOne"
+                        font.letterSpacing: 2
                     }
 
                     // Heart Rate (Main Stat)
@@ -873,11 +854,6 @@ Rectangle {
                             anchors.centerIn: parent
                             spacing: 10
 
-                            Text {
-                                text: "😴"
-                                font.pixelSize: 24
-                            }
-
                             Column {
                                 spacing: 2
 
@@ -910,11 +886,6 @@ Rectangle {
                         Row {
                             anchors.centerIn: parent
                             spacing: 10
-
-                            Text {
-                                text: "💧"
-                                font.pixelSize: 24
-                            }
 
                             Column {
                                 spacing: 2
@@ -963,7 +934,7 @@ Rectangle {
                     cursorShape: Qt.PointingHandCursor
                     // Signal handler: Click for detailed health view
                     onClicked: {
-                        console.log("❤️ Signal: Health widget clicked - HR:", homePage.heartRateAvg, "BPM")
+                        console.log("Signal: Health widget clicked - HR:", homePage.heartRateAvg, "BPM")
                     }
                 }
             }
@@ -1028,14 +999,14 @@ Rectangle {
             cursorShape: Qt.PointingHandCursor
             // Signal handler: Nutrient bar clicked
             onClicked: {
-                console.log("📊 Signal:", label, "clicked -", current, "/", goal, unit)
+                console.log("Signal:", label, "clicked -", current, "/", goal, unit)
             }
         }
     }
 
     // Stat Item Component
     component StatItem: Item {
-        property string icon: "📊"
+        property string icon: ""
         property real value: 0
         property string label: "stat"
         property color valueColor: "#ffffff"
@@ -1046,12 +1017,6 @@ Rectangle {
         Row {
             anchors.fill: parent
             spacing: 8
-            
-            Text {
-                text: icon
-                font.pixelSize: 16
-                anchors.verticalCenter: parent.verticalCenter
-            }
             
             Column {
                 anchors.verticalCenter: parent.verticalCenter
@@ -1132,12 +1097,6 @@ Rectangle {
 
                         Text {
                             anchors.horizontalCenter: parent.horizontalCenter
-                            text: "👟"
-                            font.pixelSize: 48
-                        }
-
-                        Text {
-                            anchors.horizontalCenter: parent.horizontalCenter
                             text: "Steps Tracker"
                             color: "#ffffff"
                             font.family: "PoetsenOne"
@@ -1152,7 +1111,7 @@ Rectangle {
                         cursorShape: Qt.PointingHandCursor
                         // Signal handler: Select steps tracker widget
                         onClicked: {
-                            console.log("👟 Signal: Steps Tracker widget added")
+                            console.log("Signal: Steps Tracker widget added")
                             homePage.widgetCount++
                             widgetSelectionPopup.close()
                         }
@@ -1176,12 +1135,6 @@ Rectangle {
 
                         Text {
                             anchors.horizontalCenter: parent.horizontalCenter
-                            text: "🔥"
-                            font.pixelSize: 48
-                        }
-
-                        Text {
-                            anchors.horizontalCenter: parent.horizontalCenter
                             text: "Calorie Tracker"
                             color: "#ffffff"
                             font.family: "PoetsenOne"
@@ -1196,7 +1149,7 @@ Rectangle {
                         cursorShape: Qt.PointingHandCursor
                         // Signal handler: Select calorie tracker widget
                         onClicked: {
-                            console.log("🔥 Signal: Calorie Tracker widget added")
+                            console.log("Signal: Calorie Tracker widget added")
                             homePage.widgetCount++
                             widgetSelectionPopup.close()
                         }
@@ -1220,12 +1173,6 @@ Rectangle {
 
                         Text {
                             anchors.horizontalCenter: parent.horizontalCenter
-                            text: "❤️"
-                            font.pixelSize: 48
-                        }
-
-                        Text {
-                            anchors.horizontalCenter: parent.horizontalCenter
                             text: "Heart Rate"
                             color: "#ffffff"
                             font.family: "PoetsenOne"
@@ -1240,7 +1187,7 @@ Rectangle {
                         cursorShape: Qt.PointingHandCursor
                         // Signal handler: Select heart rate widget
                         onClicked: {
-                            console.log("❤️ Signal: Heart Rate widget added")
+                            console.log("Signal: Heart Rate widget added")
                             homePage.widgetCount++
                             widgetSelectionPopup.close()
                         }
@@ -1264,12 +1211,6 @@ Rectangle {
 
                         Text {
                             anchors.horizontalCenter: parent.horizontalCenter
-                            text: "💧"
-                            font.pixelSize: 48
-                        }
-
-                        Text {
-                            anchors.horizontalCenter: parent.horizontalCenter
                             text: "Water Intake"
                             color: "#ffffff"
                             font.family: "PoetsenOne"
@@ -1284,7 +1225,7 @@ Rectangle {
                         cursorShape: Qt.PointingHandCursor
                         // Signal handler: Select water intake widget
                         onClicked: {
-                            console.log("💧 Signal: Water Intake widget added")
+                            console.log("Signal: Water Intake widget added")
                             homePage.widgetCount++
                             widgetSelectionPopup.close()
                         }
@@ -1315,7 +1256,7 @@ Rectangle {
                     cursorShape: Qt.PointingHandCursor
                     // Signal handler: Cancel and close popup
                     onClicked: {
-                        console.log("❌ Signal: Widget selection cancelled")
+                        console.log("Signal: Widget selection cancelled")
                         widgetSelectionPopup.close()
                     }
                 }
@@ -1324,12 +1265,12 @@ Rectangle {
 
         // Signal handler: Popup opened
         onOpened: {
-            console.log("📦 Signal: Widget selection popup opened")
+            console.log("Signal: Widget selection popup opened")
         }
 
         // Signal handler: Popup closed
         onClosed: {
-            console.log("📦 Signal: Widget selection popup closed. Total widgets:", homePage.widgetCount)
+            console.log("Signal: Widget selection popup closed. Total widgets:", homePage.widgetCount)
         }
     }
 }
