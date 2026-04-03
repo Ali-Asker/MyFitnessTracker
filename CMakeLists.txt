@@ -24,8 +24,6 @@ qt_add_executable(MyFitnessTracker
     src/Workouts/CardioWorkout.cpp
     src/Workouts/StrengthWorkout.cpp
     src/Workouts/YogaWorkout.cpp
-    src/components/WorkoutCard/WorkoutCard.cpp
-    src/components/WorkoutDialog/WorkoutDialog.cpp
     
     include/DataManager.h
     include/Log.h
@@ -37,8 +35,6 @@ qt_add_executable(MyFitnessTracker
     include/Workouts/CardioWorkout.h
     include/Workouts/StrengthWorkout.h
     include/Workouts/YogaWorkout.h
-    src/components/WorkoutCard/WorkoutCard.h
-    src/components/WorkoutDialog/WorkoutDialog.h
     
     FitnessDesigner/FitnessDesigner.qrc
 )
@@ -46,8 +42,6 @@ qt_add_executable(MyFitnessTracker
 target_include_directories(MyFitnessTracker PRIVATE
     include
     include/Workouts
-    src/components/WorkoutCard
-    src/components/WorkoutDialog
 )
 
 target_link_libraries(MyFitnessTracker PRIVATE
