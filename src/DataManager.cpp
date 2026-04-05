@@ -69,6 +69,11 @@ void DataManager::saveData(const string& filename, const LogManager& logManager)
         {
             entry["logType"]           = "Nutrition";
             entry["caloriesConsumed"]  = n->getCaloriesConsumed();
+            entry["protein"]           = n->getProtein();
+            entry["carbs"]             = n->getCarbs();
+            entry["fats"]              = n->getFats();
+            entry["sugar"]             = n->getSugar();
+            entry["title"]             = n->getTitle();
 
             switch (n->getMealType()) {
                 case MealType::Breakfast: entry["mealType"] = "Breakfast"; break;
@@ -171,7 +176,13 @@ void DataManager::loadData(const string& filename, LogManager& logManager) const
             else                                mealType = MealType::Snack;
 
             double caloriesConsumed = entry["caloriesConsumed"];
-            logManager.addLog(make_unique<Nutrition>(logID, date, description, duration, mealType, caloriesConsumed));
+            double protein = entry.contains("protein") ? entry["protein"].get<double>() : 0.0;
+            double carbs = entry.contains("carbs") ? entry["carbs"].get<double>() : 0.0;
+            double fats = entry.contains("fats") ? entry["fats"].get<double>() : 0.0;
+            double sugar = entry.contains("sugar") ? entry["sugar"].get<double>() : 0.0;
+            std::string title = entry.contains("title") ? entry["title"].get<std::string>() : "";
+            
+            logManager.addLog(make_unique<Nutrition>(logID, date, description, duration, mealType, caloriesConsumed, protein, carbs, fats, sugar, title));
         }
         else
         {

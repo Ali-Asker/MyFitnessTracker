@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Shapes
 import QtQuick.Window
+import FitnessHandlers 1.0
 
 Rectangle {
     id: mainRoot
@@ -16,6 +17,30 @@ Rectangle {
     color: "#252525"
 
     property int currentPage: 0
+    
+    // C++ Handlers instance for backend communication
+    Handlers {
+        id: handlers
+        
+        // Listen for navigation requests from C++
+        onNavigationRequested: (pageIndex) => {
+            mainRoot.currentPage = pageIndex
+        }
+        
+        // Listen for data changes from C++
+        onNutritionChanged: {
+            homePage.caloriesCurrent = handlers.totalCalories
+            homePage.proteinCurrent = handlers.totalProtein
+            homePage.carbsCurrent = handlers.totalCarbs
+            homePage.fatCurrent = handlers.totalFats
+            homePage.sugarCurrent = handlers.totalSugar
+        }
+        
+        onWorkoutsChanged: {
+            homePage.caloriesBurned = handlers.totalCaloriesBurned
+            homePage.activeMinutes = handlers.totalWorkoutDuration
+        }
+    }
 
     SideMenuBar {
         id: sideMenu
@@ -25,6 +50,7 @@ Rectangle {
         currentPage: mainRoot.currentPage
         onNavigate: (page) => {
             mainRoot.currentPage = page
+            handlers.navigateToPage(page)
         }
     }
 
@@ -37,16 +63,52 @@ Rectangle {
         anchors.bottom: parent.bottom
 
         HomePage {
+            id: homePage
             anchors.fill: parent
             visible: mainRoot.currentPage === 0
+            
+            // Handle navigation signal from HomePage
+            onNavigateToPage: (page) => {
+                mainRoot.currentPage = page
+            }
         }
         NutritionPage {
+            id: nutritionPage
             anchors.fill: parent
             visible: mainRoot.currentPage === 1
+            
+            // Connect nutrition updates to HomePage
+            onNutritionUpdated: (calories, protein, carbs, fats, sugar) => {
+                homePage.caloriesCurrent = calories
+                homePage.proteinCurrent = protein
+                homePage.carbsCurrent = carbs
+                homePage.fatCurrent = fats
+                homePage.sugarCurrent = sugar
+            }
         }
         WorkoutPage {
+            id: workoutPage
             anchors.fill: parent
             visible: mainRoot.currentPage === 2
+            
+            // Connect workout updates to HomePage
+            onWorkoutUpdated: (totalWorkouts, totalDuration, caloriesBurned) => {
+                homePage.caloriesBurned = caloriesBurned
+                homePage.activeMinutes = totalDuration
+                // Update today's workouts list with full details
+                var workoutDetails = []
+                for (var i = 0; i < workoutPage.workoutsModel.count && i < 3; i++) {
+                    var w = workoutPage.workoutsModel.get(i)
+                    workoutDetails.push({
+                        title: w.title,
+                        reps: w.reps,
+                        sets: w.sets,
+                        duration: w.duration,
+                        workoutType: w.workoutType
+                    })
+                }
+                homePage.todaysWorkouts = workoutDetails
+            }
         }
     }
 

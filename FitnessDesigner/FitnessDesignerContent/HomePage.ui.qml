@@ -9,6 +9,11 @@ Rectangle {
     color: "#252525"
 
     // ==========================================
+    // SIGNALS - Navigation
+    // ==========================================
+    signal navigateToPage(int page)
+
+    // ==========================================
     // PROPERTIES - Fitness Data (Signal handlers react to changes)
     // ==========================================
     property int widgetCount: 0
@@ -16,21 +21,21 @@ Rectangle {
     
     // Nutrition Goals & Current Values
     property int calorieGoal: 2000
-    property int caloriesCurrent: 1450
+    property int caloriesCurrent: 0
     property int proteinGoal: 150      // grams
-    property int proteinCurrent: 95
+    property int proteinCurrent: 0
     property int carbsGoal: 250        // grams
-    property int carbsCurrent: 180
+    property int carbsCurrent: 0
     property int sugarGoal: 50         // grams
-    property int sugarCurrent: 32
+    property int sugarCurrent: 0
     property int fatGoal: 65           // grams
-    property int fatCurrent: 45
+    property int fatCurrent: 0
     
     // Activity Stats (Essential Widget 1 - Activity Focus)
     property int stepsToday: 8547
     property int stepsGoal: 10000
-    property int caloriesBurned: 420
-    property int activeMinutes: 45
+    property int caloriesBurned: 0
+    property int activeMinutes: 0
     property double distanceKm: 6.2
     
     // Health Stats (Essential Widget 2 - Health Focus)
@@ -42,8 +47,8 @@ Rectangle {
     property int waterGlasses: 6
     property int waterGoal: 8
     
-    // Today's Workouts
-    property var todaysWorkouts: ["Push Day - Chest & Triceps", "15 min HIIT Cardio"]
+    // Today's Workouts - array of objects with full details
+    property var todaysWorkouts: []
 
     // ==========================================
     // SIGNAL HANDLER: Property Change Detection
@@ -121,8 +126,9 @@ Rectangle {
             id: header_Widget
 
             Layout.fillWidth: true
-            Layout.preferredHeight: 220
-            Layout.minimumHeight: 180
+            Layout.fillHeight: true
+            Layout.preferredHeight: parent.height * 0.40
+            Layout.minimumHeight: 220
 
             color: "#3d3d3d"
             radius: 8
@@ -188,33 +194,73 @@ Rectangle {
                             
                             Rectangle {
                                 width: parent.width
-                                height: 32
+                                height: 44
                                 color: workoutItemArea.containsMouse ? "#4a4a4a" : "#454545"
-                                radius: 4
+                                radius: 6
                                 
                                 Behavior on color { ColorAnimation { duration: 100 } }
 
-                                Row {
+                                RowLayout {
                                     anchors.fill: parent
                                     anchors.leftMargin: 10
                                     anchors.rightMargin: 10
-                                    spacing: 8
+                                    spacing: 10
                                     
-                                    Text {
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        text: "•"
-                                        color: "#4CAF50"
-                                        font.pixelSize: 18
+                                    // Workout type indicator dot
+                                    Rectangle {
+                                        width: 8
+                                        height: 8
+                                        radius: 4
+                                        color: modelData.workoutType === "chest" ? "#c62828" : 
+                                               modelData.workoutType === "leg" ? "#ef6c00" : 
+                                               modelData.workoutType === "arm" ? "#1565c0" : "#4CAF50"
                                     }
                                     
-                                    Text {
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        text: modelData
-                                        color: "#ffffff"
-                                        font.pixelSize: 14
-                                        font.family: "PoetsenOne"
-                                        elide: Text.ElideRight
-                                        width: parent.width - 30
+                                    // Workout info column
+                                    ColumnLayout {
+                                        Layout.fillWidth: true
+                                        Layout.fillHeight: true
+                                        spacing: 2
+                                        
+                                        // Title
+                                        Text {
+                                            text: modelData.title || ""
+                                            color: "#ffffff"
+                                            font.pixelSize: 13
+                                            font.family: "PoetsenOne"
+                                            font.weight: Font.Bold
+                                            elide: Text.ElideRight
+                                            Layout.fillWidth: true
+                                        }
+                                        
+                                        // Stats row
+                                        RowLayout {
+                                            Layout.fillWidth: true
+                                            spacing: 12
+                                            
+                                            // Reps x Sets
+                                            Text {
+                                                text: (modelData.reps || 0) + " reps × " + (modelData.sets || 0) + " sets"
+                                                color: "#aaaaaa"
+                                                font.pixelSize: 10
+                                                font.family: "Segoe UI"
+                                            }
+                                            
+                                            // Duration
+                                            Text {
+                                                text: {
+                                                    var mins = modelData.duration || 0
+                                                    if (mins < 60) return mins + " min"
+                                                    var hours = Math.floor(mins / 60)
+                                                    var remaining = mins % 60
+                                                    if (remaining === 0) return hours + "h"
+                                                    return hours + "h " + remaining + "m"
+                                                }
+                                                color: "#888888"
+                                                font.pixelSize: 10
+                                                font.family: "Segoe UI"
+                                            }
+                                        }
                                     }
                                 }
                                 
@@ -223,12 +269,21 @@ Rectangle {
                                     anchors.fill: parent
                                     hoverEnabled: true
                                     cursorShape: Qt.PointingHandCursor
-                                    // Signal handler: View workout details
                                     onClicked: {
-                                        console.log("Signal: Workout clicked -", modelData)
+                                        console.log("Signal: Workout clicked -", modelData.title)
                                     }
                                 }
                             }
+                        }
+                        
+                        // Show message when no workouts
+                        Text {
+                            visible: homePage.todaysWorkouts.length === 0
+                            text: "No workouts yet"
+                            color: "#888888"
+                            font.family: "Segoe UI"
+                            font.pixelSize: 12
+                            font.italic: true
                         }
                     }
                 }
@@ -240,128 +295,203 @@ Rectangle {
                     color: "#555555"
                 }
 
-                // Center Section: Pie Chart for Macros
+                // Center Section: Modern Donut Chart for Macros
                 Item {
                     Layout.fillHeight: true
-                    Layout.preferredWidth: parent.height - 40
+                    Layout.preferredWidth: parent.height - 20
                     
-                    // Pie Chart using Shape
-                    Shape {
-                        id: pieChart
+                    // Background glow effect
+                    Rectangle {
                         anchors.centerIn: parent
-                        width: Math.min(parent.width, parent.height) - 20
+                        width: donutChart.width + 20
+                        height: width
+                        radius: width / 2
+                        color: "transparent"
+                        border.color: Qt.rgba(1, 1, 1, 0.05)
+                        border.width: 8
+                    }
+                    
+                    // Modern Donut Chart using Shape
+                    Shape {
+                        id: donutChart
+                        anchors.centerIn: parent
+                        width: Math.min(parent.width, parent.height) - 30
                         height: width
                         
-                        property real proteinAngle: (homePage.proteinCurrent / (homePage.proteinCurrent + homePage.carbsCurrent + homePage.fatCurrent)) * 360
-                        property real carbsAngle: (homePage.carbsCurrent / (homePage.proteinCurrent + homePage.carbsCurrent + homePage.fatCurrent)) * 360
-                        property real fatAngle: (homePage.fatCurrent / (homePage.proteinCurrent + homePage.carbsCurrent + homePage.fatCurrent)) * 360
+                        // Calculate totals with fallback to prevent NaN
+                        property real totalMacros: Math.max(1, homePage.proteinCurrent + homePage.carbsCurrent + homePage.fatCurrent)
+                        property real proteinAngle: (homePage.proteinCurrent / totalMacros) * 360
+                        property real carbsAngle: (homePage.carbsCurrent / totalMacros) * 360
+                        property real fatAngle: (homePage.fatCurrent / totalMacros) * 360
                         
                         property real centerX: width / 2
                         property real centerY: height / 2
-                        property real radius: width / 2 - 5
+                        property real outerRadius: width / 2 - 2
+                        property real innerRadius: outerRadius * 0.65
+                        
+                        // Smooth animations
+                        Behavior on proteinAngle { NumberAnimation { duration: 500; easing.type: Easing.OutCubic } }
+                        Behavior on carbsAngle { NumberAnimation { duration: 500; easing.type: Easing.OutCubic } }
+                        Behavior on fatAngle { NumberAnimation { duration: 500; easing.type: Easing.OutCubic } }
 
-                        // Protein slice (Red/Pink)
+                        // Protein arc (Coral Red)
                         ShapePath {
-                            fillColor: "#e74c3c"
-                            strokeColor: "#3d3d3d"
-                            strokeWidth: 2
-                            startX: pieChart.centerX
-                            startY: pieChart.centerY
+                            fillColor: "#ff6b6b"
+                            strokeColor: "transparent"
+                            startX: donutChart.centerX + donutChart.outerRadius
+                            startY: donutChart.centerY
                             
-                            PathLine { x: pieChart.centerX + pieChart.radius; y: pieChart.centerY }
                             PathArc {
-                                x: pieChart.centerX + pieChart.radius * Math.cos(pieChart.proteinAngle * Math.PI / 180)
-                                y: pieChart.centerY + pieChart.radius * Math.sin(pieChart.proteinAngle * Math.PI / 180)
-                                radiusX: pieChart.radius
-                                radiusY: pieChart.radius
-                                useLargeArc: pieChart.proteinAngle > 180
+                                x: donutChart.centerX + donutChart.outerRadius * Math.cos(donutChart.proteinAngle * Math.PI / 180)
+                                y: donutChart.centerY + donutChart.outerRadius * Math.sin(donutChart.proteinAngle * Math.PI / 180)
+                                radiusX: donutChart.outerRadius
+                                radiusY: donutChart.outerRadius
+                                useLargeArc: donutChart.proteinAngle > 180
                             }
-                            PathLine { x: pieChart.centerX; y: pieChart.centerY }
+                            PathLine { 
+                                x: donutChart.centerX + donutChart.innerRadius * Math.cos(donutChart.proteinAngle * Math.PI / 180)
+                                y: donutChart.centerY + donutChart.innerRadius * Math.sin(donutChart.proteinAngle * Math.PI / 180)
+                            }
+                            PathArc {
+                                x: donutChart.centerX + donutChart.innerRadius
+                                y: donutChart.centerY
+                                radiusX: donutChart.innerRadius
+                                radiusY: donutChart.innerRadius
+                                useLargeArc: donutChart.proteinAngle > 180
+                                direction: PathArc.Counterclockwise
+                            }
                         }
                         
-                        // Carbs slice (Yellow/Orange)
+                        // Carbs arc (Golden Yellow)
                         ShapePath {
-                            fillColor: "#f39c12"
-                            strokeColor: "#3d3d3d"
-                            strokeWidth: 2
-                            startX: pieChart.centerX
-                            startY: pieChart.centerY
+                            fillColor: "#feca57"
+                            strokeColor: "transparent"
                             
+                            property real startAngle: donutChart.proteinAngle
+                            property real endAngle: donutChart.proteinAngle + donutChart.carbsAngle
+                            
+                            startX: donutChart.centerX + donutChart.outerRadius * Math.cos(startAngle * Math.PI / 180)
+                            startY: donutChart.centerY + donutChart.outerRadius * Math.sin(startAngle * Math.PI / 180)
+                            
+                            PathArc {
+                                x: donutChart.centerX + donutChart.outerRadius * Math.cos((donutChart.proteinAngle + donutChart.carbsAngle) * Math.PI / 180)
+                                y: donutChart.centerY + donutChart.outerRadius * Math.sin((donutChart.proteinAngle + donutChart.carbsAngle) * Math.PI / 180)
+                                radiusX: donutChart.outerRadius
+                                radiusY: donutChart.outerRadius
+                                useLargeArc: donutChart.carbsAngle > 180
+                            }
                             PathLine { 
-                                x: pieChart.centerX + pieChart.radius * Math.cos(pieChart.proteinAngle * Math.PI / 180)
-                                y: pieChart.centerY + pieChart.radius * Math.sin(pieChart.proteinAngle * Math.PI / 180)
+                                x: donutChart.centerX + donutChart.innerRadius * Math.cos((donutChart.proteinAngle + donutChart.carbsAngle) * Math.PI / 180)
+                                y: donutChart.centerY + donutChart.innerRadius * Math.sin((donutChart.proteinAngle + donutChart.carbsAngle) * Math.PI / 180)
                             }
                             PathArc {
-                                x: pieChart.centerX + pieChart.radius * Math.cos((pieChart.proteinAngle + pieChart.carbsAngle) * Math.PI / 180)
-                                y: pieChart.centerY + pieChart.radius * Math.sin((pieChart.proteinAngle + pieChart.carbsAngle) * Math.PI / 180)
-                                radiusX: pieChart.radius
-                                radiusY: pieChart.radius
-                                useLargeArc: pieChart.carbsAngle > 180
+                                x: donutChart.centerX + donutChart.innerRadius * Math.cos(donutChart.proteinAngle * Math.PI / 180)
+                                y: donutChart.centerY + donutChart.innerRadius * Math.sin(donutChart.proteinAngle * Math.PI / 180)
+                                radiusX: donutChart.innerRadius
+                                radiusY: donutChart.innerRadius
+                                useLargeArc: donutChart.carbsAngle > 180
+                                direction: PathArc.Counterclockwise
                             }
-                            PathLine { x: pieChart.centerX; y: pieChart.centerY }
                         }
                         
-                        // Fat slice (Blue)
+                        // Fat arc (Sky Blue)
                         ShapePath {
-                            fillColor: "#3498db"
-                            strokeColor: "#3d3d3d"
-                            strokeWidth: 2
-                            startX: pieChart.centerX
-                            startY: pieChart.centerY
+                            fillColor: "#54a0ff"
+                            strokeColor: "transparent"
                             
+                            property real startAngle: donutChart.proteinAngle + donutChart.carbsAngle
+                            
+                            startX: donutChart.centerX + donutChart.outerRadius * Math.cos(startAngle * Math.PI / 180)
+                            startY: donutChart.centerY + donutChart.outerRadius * Math.sin(startAngle * Math.PI / 180)
+                            
+                            PathArc {
+                                x: donutChart.centerX + donutChart.outerRadius
+                                y: donutChart.centerY
+                                radiusX: donutChart.outerRadius
+                                radiusY: donutChart.outerRadius
+                                useLargeArc: donutChart.fatAngle > 180
+                            }
                             PathLine { 
-                                x: pieChart.centerX + pieChart.radius * Math.cos((pieChart.proteinAngle + pieChart.carbsAngle) * Math.PI / 180)
-                                y: pieChart.centerY + pieChart.radius * Math.sin((pieChart.proteinAngle + pieChart.carbsAngle) * Math.PI / 180)
+                                x: donutChart.centerX + donutChart.innerRadius
+                                y: donutChart.centerY
                             }
                             PathArc {
-                                x: pieChart.centerX + pieChart.radius
-                                y: pieChart.centerY
-                                radiusX: pieChart.radius
-                                radiusY: pieChart.radius
-                                useLargeArc: pieChart.fatAngle > 180
+                                x: donutChart.centerX + donutChart.innerRadius * Math.cos((donutChart.proteinAngle + donutChart.carbsAngle) * Math.PI / 180)
+                                y: donutChart.centerY + donutChart.innerRadius * Math.sin((donutChart.proteinAngle + donutChart.carbsAngle) * Math.PI / 180)
+                                radiusX: donutChart.innerRadius
+                                radiusY: donutChart.innerRadius
+                                useLargeArc: donutChart.fatAngle > 180
+                                direction: PathArc.Counterclockwise
                             }
-                            PathLine { x: pieChart.centerX; y: pieChart.centerY }
                         }
                     }
                     
-                    // Center circle with calories
+                    // Center circle with calories - modern style
                     Rectangle {
                         anchors.centerIn: parent
-                        width: pieChart.width * 0.5
+                        width: donutChart.width * 0.58
                         height: width
                         radius: width / 2
                         color: "#3d3d3d"
                         
-                        Column {
-                            anchors.centerIn: parent
-                            spacing: 2
+                        // Subtle inner shadow effect
+                        Rectangle {
+                            anchors.fill: parent
+                            anchors.margins: 3
+                            radius: width / 2
+                            color: "#353535"
                             
-                            Text {
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                text: homePage.caloriesCurrent
-                                color: "#ffffff"
-                                font.pixelSize: 22
-                                font.family: "PoetsenOne"
-                                font.weight: Font.Bold
-                            }
-                            
-                            Text {
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                text: "/ " + homePage.calorieGoal + " kcal"
-                                color: "#888888"
-                                font.pixelSize: 10
-                                font.family: "PoetsenOne"
+                            Column {
+                                anchors.centerIn: parent
+                                spacing: 4
+                                
+                                Text {
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    text: homePage.caloriesCurrent
+                                    color: "#ffffff"
+                                    font.pixelSize: 26
+                                    font.family: "PoetsenOne"
+                                    font.weight: Font.Bold
+                                    
+                                    Behavior on text { 
+                                        SequentialAnimation {
+                                            NumberAnimation { target: parent; property: "scale"; to: 1.1; duration: 100 }
+                                            NumberAnimation { target: parent; property: "scale"; to: 1.0; duration: 100 }
+                                        }
+                                    }
+                                }
+                                
+                                Row {
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    spacing: 3
+                                    
+                                    Text {
+                                        text: "/"
+                                        color: "#54a0ff"
+                                        font.pixelSize: 11
+                                        font.family: "PoetsenOne"
+                                    }
+                                    
+                                    Text {
+                                        text: homePage.calorieGoal + " kcal"
+                                        color: "#888888"
+                                        font.pixelSize: 11
+                                        font.family: "PoetsenOne"
+                                    }
+                                }
                             }
                         }
                     }
                     
                     MouseArea {
+                        id: pieChartArea
                         anchors.fill: parent
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
-                        // Signal handler: Click pie chart for details
+                        // Navigate to Nutrition page when pie chart is clicked
                         onClicked: {
-                            console.log("Signal: Pie chart clicked - showing macro details")
+                            console.log("Signal: Navigating to Nutrition page")
+                            homePage.navigateToPage(1)
                         }
                     }
                 }
@@ -439,7 +569,8 @@ Rectangle {
 
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.maximumHeight: 350
+            Layout.preferredHeight: parent.height * 0.70
+            Layout.minimumHeight: 120
 
             spacing: 15
 
@@ -592,8 +723,7 @@ Rectangle {
                     id: widget_blue
 
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 140
-                    Layout.maximumHeight: 160
+                    Layout.fillHeight: true
 
                     color: "#2d5a30"
                     radius: 8
@@ -610,6 +740,8 @@ Rectangle {
                             font.family: "PoetsenOne"
                             font.letterSpacing: 2
                         }
+                        
+                        Item { Layout.fillHeight: true }
 
                         Text {
                             text: "7"
@@ -627,6 +759,8 @@ Rectangle {
                             font.family: "PoetsenOne"
                             Layout.alignment: Qt.AlignHCenter
                         }
+                        
+                        Item { Layout.fillHeight: true }
                     }
                     
                     MouseArea {
@@ -640,24 +774,12 @@ Rectangle {
                     }
                 }
 
-                Item {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                }
-            }
-
-            // Column 3: Add Widget button (same size as column 2 widget)
-            ColumnLayout {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                spacing: 0
-
+                // Add Widget button - fills remaining half
                 Rectangle {
                     id: widget_add
 
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 140
-                    Layout.maximumHeight: 160
+                    Layout.fillHeight: true
 
                     color: addWidgetArea.pressed ? "#5a5959" : (addWidgetArea.containsMouse ? "#929191" : "#828181")
                     radius: 8
@@ -739,11 +861,6 @@ Rectangle {
                             widgetSelectionPopup.open()
                         }
                     }
-                }
-
-                Item {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
                 }
             }
 

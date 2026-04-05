@@ -2,10 +2,15 @@
 #include <QQuickView>
 #include <QUrl>
 #include <QtGui/QtGui>
+#include <QQmlContext>
+#include "Handlers.h"
 
 int main(int argc, char* argv[])
 {
     QGuiApplication app(argc, argv);
+
+    // Register Handlers type with QML
+    qmlRegisterType<Handlers>("FitnessHandlers", 1, 0, "Handlers");
 
     QQuickView view;
     view.setTitle(QStringLiteral("MyFitnessTracker"));

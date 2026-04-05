@@ -20,6 +20,7 @@ qt_add_executable(MyFitnessTracker
     src/LogManager.cpp
     src/Nutrition.cpp
     src/HealthMetric.cpp
+    src/Handlers.cpp
     src/Workouts/Workout.cpp
     src/Workouts/CardioWorkout.cpp
     src/Workouts/StrengthWorkout.cpp
@@ -31,6 +32,7 @@ qt_add_executable(MyFitnessTracker
     include/Nutrition.h
     include/HealthMetric.h
     include/Analytics.h
+    include/Handlers.h
     include/Workouts/Workout.h
     include/Workouts/CardioWorkout.h
     include/Workouts/StrengthWorkout.h
