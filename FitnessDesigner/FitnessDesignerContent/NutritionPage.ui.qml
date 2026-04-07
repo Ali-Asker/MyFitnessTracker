@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Shapes
 import QtQuick.Layouts
 import QtQuick.Controls
+import FitnessDesigner 1.0
 
 Rectangle {
     id: nutritionPage
@@ -383,18 +384,18 @@ Rectangle {
 
                     Row {
                         spacing: 4
-                        Rectangle { width: 10; height: 10; radius: 2; color: "#ff9800" }
-                        Text { text: "Carbs"; color: "#cccccc"; font.pixelSize: 10; font.family: "PoetsenOne" }
+                        Rectangle { width: 15; height: 15; radius: 2; color: "#ff9800" }
+                        Text { text: "Carbs"; color: "#cccccc"; font.pixelSize: 14; font.family: "PoetsenOne" }
                     }
                     Row {
                         spacing: 4
-                        Rectangle { width: 10; height: 10; radius: 2; color: "#00bcd4" }
-                        Text { text: "Protein"; color: "#cccccc"; font.pixelSize: 10; font.family: "PoetsenOne" }
+                        Rectangle { width: 15; height: 15; radius: 2; color: "#00bcd4" }
+                        Text { text: "Protein"; color: "#cccccc"; font.pixelSize: 14; font.family: "PoetsenOne" }
                     }
                     Row {
                         spacing: 4
-                        Rectangle { width: 10; height: 10; radius: 2; color: "#9c27b0" }
-                        Text { text: "Fats"; color: "#cccccc"; font.pixelSize: 10; font.family: "PoetsenOne" }
+                        Rectangle { width: 15; height: 15; radius: 2; color: "#9c27b0" }
+                        Text { text: "Fats"; color: "#cccccc"; font.pixelSize: 14; font.family: "PoetsenOne" }
                     }
 
                     Item { Layout.fillWidth: true }
@@ -742,11 +743,8 @@ Rectangle {
                                 font.weight: Font.Bold
                                 text: "Clear"
                             }
-                            MouseArea {
+                            HandCursor {
                                 id: clearArea
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
                                 onClicked: clearForm()
                             }
                         }
@@ -771,11 +769,8 @@ Rectangle {
                                 font.weight: Font.Bold
                                 text: "Post"
                             }
-                            MouseArea {
+                            HandCursor {
                                 id: postArea
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
                                 onClicked: addMeal()
                             }
                         }
@@ -883,11 +878,8 @@ Rectangle {
                                         font.weight: Font.Bold
                                     }
 
-                                    MouseArea {
+                                    HandCursor {
                                         id: deleteArea
-                                        anchors.fill: parent
-                                        hoverEnabled: true
-                                        cursorShape: Qt.PointingHandCursor
                                         onClicked: deleteMeal(index)
                                     }
                                 }

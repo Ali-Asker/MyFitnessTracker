@@ -4,3 +4,9 @@ SideMenuBar 1.0 SideMenuBar.qml
 HomePage 1.0 HomePage.ui.qml
 WorkoutPage 1.0 WorkoutPage.ui.qml
 NutritionPage 1.0 NutritionPage.ui.qml
+
+# Components
+PageHeaderText 1.0 Components/PageHeaderText.qml
+ModernDonutBar 1.0 Components/ModernDonutBar.qml
+NutrientStatCircle 1.0 Components/NutrientStatCircle.qml
+HandCursor 1.0 Components/HandCursor.qml

@@ -3,6 +3,7 @@
 #include <QUrl>
 #include <QtGui/QtGui>
 #include <QQmlContext>
+#include <QQmlEngine>
 #include "Handlers.h"
 
 int main(int argc, char* argv[])
@@ -13,6 +14,10 @@ int main(int argc, char* argv[])
     qmlRegisterType<Handlers>("FitnessHandlers", 1, 0, "Handlers");
 
     QQuickView view;
+    
+    // Add import path for FitnessDesigner module
+    view.engine()->addImportPath("qrc:/");
+    
     view.setTitle(QStringLiteral("MyFitnessTracker"));
     // Use a frameless window so only the custom QML chrome is visible
     view.setFlags(Qt::FramelessWindowHint | Qt::Window);
@@ -23,7 +28,7 @@ int main(int argc, char* argv[])
     // Set initial window size
     view.resize(1366, 768);
     
-    view.setSource(QUrl(QStringLiteral("qrc:/Main.qml")));
+    view.setSource(QUrl(QStringLiteral("qrc:/FitnessDesigner/Main.qml")));
     if (view.status() != QQuickView::Ready) {
         return -1;
     }

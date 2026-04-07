@@ -12,6 +12,11 @@ Project {
         directory: "FitnessDesignerContent"
         filter: "*.qml"
     }
+
+    QmlFiles {
+        directory: "FitnessDesignerContent/mouseActions"
+        filter: "*.qml"
+    }
     
     QmlFiles {
         directory: "FitnessDesignerContent/DesignTokens"

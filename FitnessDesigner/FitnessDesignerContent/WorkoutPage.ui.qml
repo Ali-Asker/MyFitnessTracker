@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Shapes
 import QtQuick.Layouts
 import QtQuick.Controls
+import FitnessDesigner 1.0
 
 Rectangle {
     id: workoutPage
@@ -111,7 +112,7 @@ Rectangle {
     // ==========================================
     
     // Greeting text at top
-    Text {
+    PageHeaderText {
         id: greetingText
 
         anchors.left: parent.left
@@ -123,13 +124,8 @@ Rectangle {
 
         height: Math.max(40, parent.height * 0.06)
 
-        color: "#afafaf"
-        font.family: "PoetsenOne"
         font.pixelSize: Math.max(24, Math.min(36, parent.width / 30))
-        font.weight: Font.Normal
-        horizontalAlignment: Text.AlignLeft
         text: getGreeting() + ", " + userName + "!"
-        verticalAlignment: Text.AlignVCenter
     }
 
     // Main content area - dynamic grid
@@ -185,11 +181,8 @@ Rectangle {
                         font.weight: Font.Bold
                     }
                     
-                    MouseArea {
+                    HandCursor {
                         id: deleteBtnArea
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
                         onClicked: deleteWorkout(index)
                     }
                 }
@@ -347,11 +340,8 @@ Rectangle {
                     }
                 }
 
-                MouseArea {
+                HandCursor {
                     id: addWidgetArea
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
                     onClicked: showingForm = true
                 }
             }
@@ -398,13 +388,15 @@ Rectangle {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     Layout.maximumHeight: parent.height * 0.55
-                    spacing: Math.max(8, parent.width * 0.03)
+                    spacing: 12
 
                     // Left column: Dropdowns (narrower)
                     ColumnLayout {
                         Layout.fillHeight: true
-                        Layout.preferredWidth: parent.width * 0.6
-                        spacing: Math.max(4, parent.height * 0.02)
+                        Layout.fillWidth: true
+                        Layout.preferredWidth: 300
+                        Layout.maximumWidth: 400
+                        spacing: 8
 
                         // Reps Dropdown
                         Rectangle {
@@ -433,9 +425,8 @@ Rectangle {
                                 }
                             }
 
-                            MouseArea {
+                            HandCursor {
                                 anchors.fill: parent
-                                cursorShape: Qt.PointingHandCursor
                                 onClicked: repsPopup.open()
                             }
                         }
@@ -467,9 +458,8 @@ Rectangle {
                                 }
                             }
 
-                            MouseArea {
+                            HandCursor {
                                 anchors.fill: parent
-                                cursorShape: Qt.PointingHandCursor
                                 onClicked: setsPopup.open()
                             }
                         }
@@ -501,9 +491,8 @@ Rectangle {
                                 }
                             }
 
-                            MouseArea {
+                            HandCursor {
                                 anchors.fill: parent
-                                cursorShape: Qt.PointingHandCursor
                                 onClicked: durationPopup.open()
                             }
                         }
@@ -540,9 +529,8 @@ Rectangle {
                             }
                         }
 
-                        MouseArea {
+                        HandCursor {
                             anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
                             onClicked: typePopup.open()
                         }
                     }
@@ -572,11 +560,8 @@ Rectangle {
                             font.weight: Font.Bold
                         }
 
-                        MouseArea {
+                        HandCursor {
                             id: cancelBtnArea
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
                             onClicked: clearForm()
                         }
                     }
@@ -599,11 +584,8 @@ Rectangle {
                             font.weight: Font.Bold
                         }
 
-                        MouseArea {
+                        HandCursor {
                             id: saveBtnArea
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
                             onClicked: saveWorkout()
                         }
                     }
@@ -677,11 +659,8 @@ Rectangle {
                         font.pixelSize: 14
                     }
 
-                    MouseArea {
+                    HandCursor {
                         id: repsItemArea
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             formReps = index + 1
                             repsPopup.close()
@@ -740,11 +719,8 @@ Rectangle {
                         font.pixelSize: 14
                     }
 
-                    MouseArea {
+                    HandCursor {
                         id: setsItemArea
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             formSets = index + 1
                             setsPopup.close()
@@ -806,11 +782,8 @@ Rectangle {
                         font.pixelSize: 14
                     }
 
-                    MouseArea {
+                    HandCursor {
                         id: durationItemArea
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             formDuration = modelData
                             durationPopup.close()
@@ -884,11 +857,8 @@ Rectangle {
                         }
                     }
 
-                    MouseArea {
+                    HandCursor {
                         id: chestArea
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             formWorkoutType = "chest"
                             typePopup.close()
@@ -923,11 +893,8 @@ Rectangle {
                         }
                     }
 
-                    MouseArea {
+                    HandCursor {
                         id: legArea
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             formWorkoutType = "leg"
                             typePopup.close()
@@ -962,11 +929,8 @@ Rectangle {
                         }
                     }
 
-                    MouseArea {
+                    HandCursor {
                         id: armArea
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             formWorkoutType = "arm"
                             typePopup.close()

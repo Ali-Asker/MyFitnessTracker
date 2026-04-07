@@ -4,13 +4,19 @@ import QmlProject
 
 Project {
     qt6Project: true
-    importPaths: [ "." ]
+    importPaths: [ ".", "Components" ]
     mainFile: "HomePage.ui.qml"
     QmlFiles {
         files: [
+            "Components/PageHeaderText.qml",
+            "Components/HandCursor.qml",
+            "Components/ModernDonutBar.qml",
+            "Components/NutrientStatCircle.qml",
             "WorkoutPage.ui.qml",
             "NutritionPage.ui.qml",
-            "HomePage.ui.qml"
+            "HomePage.ui.qml",
+            "Main.qml",
+            "SideMenuBar.qml"
         ]
     }
     FontFiles {

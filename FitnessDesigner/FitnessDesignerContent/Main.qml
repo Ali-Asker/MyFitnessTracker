@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Shapes
 import QtQuick.Window
+import FitnessDesigner 1.0
 import FitnessHandlers 1.0
 
 Rectangle {
@@ -11,8 +12,8 @@ Rectangle {
     anchors.fill: parent
 
     // Set minimum sizes to prevent layout collapse
-    property int minimumWidth: 900
-    property int minimumHeight: 600
+    property int minimumWidth: 1200
+    property int minimumHeight: 800
 
     color: "#252525"
 

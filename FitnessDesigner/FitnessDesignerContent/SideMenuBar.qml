@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Shapes
 import QtQuick.Window
+import FitnessDesigner 1.0
 
 Item {
     id: sideMenuBar
@@ -129,11 +130,8 @@ Item {
             Behavior on color { ColorAnimation { duration: 150 } }
         }
 
-        MouseArea {
+        HandCursor {
             id: minimizeArea
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
             onClicked: sideMenuBar.minimized = !sideMenuBar.minimized
         }
     }
@@ -205,11 +203,8 @@ Item {
             Behavior on color { ColorAnimation { duration: 150 } }
         }
 
-        MouseArea {
+        HandCursor {
             id: workoutArea
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
             onClicked: sideMenuBar.navigate(2)
         }
     }
@@ -282,11 +277,8 @@ Item {
             Behavior on color { ColorAnimation { duration: 150 } }
         }
 
-        MouseArea {
+        HandCursor {
             id: nutritionArea
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
             onClicked: sideMenuBar.navigate(1)
         }
     }
@@ -372,11 +364,8 @@ Item {
             }
         }
 
-        MouseArea {
+        HandCursor {
             id: homeArea
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
             onClicked: sideMenuBar.navigate(0)
         }
     }
@@ -801,7 +790,7 @@ Item {
         cursorShape: Qt.PointingHandCursor
         onClicked: sideMenuBar.minimized = !sideMenuBar.minimized
     }
-    MouseArea {
+    MouseArea{
         anchors.fill: home
         cursorShape: Qt.PointingHandCursor
         onClicked: navigate(0)
