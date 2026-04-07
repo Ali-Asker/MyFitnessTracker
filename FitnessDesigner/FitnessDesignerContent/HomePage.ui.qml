@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Shapes
 import QtQuick.Layouts
 import QtQuick.Controls
-import FitnessDesigner 1.0
 
 Rectangle {
     id: homePage
@@ -51,19 +50,6 @@ Rectangle {
     // Today's Workouts - array of objects with full details
     property var todaysWorkouts: []
 
-    // ==========================================
-    // SIGNAL HANDLER: Property Change Detection
-    // ==========================================
-    onCaloriesCurrentChanged: {
-        console.log("Signal: Calories updated to", caloriesCurrent, "/", calorieGoal)
-    }
-    
-    onStepsTodayChanged: {
-        console.log("Signal: Steps updated to", stepsToday)
-        if (stepsToday >= stepsGoal) {
-            console.log("Congratulations! Step goal reached!")
-        }
-    }
 
     // Helper function to get greeting based on time
     function getGreeting() {
@@ -341,306 +327,68 @@ Rectangle {
                             columns: 2
                             rows: 2
                             columnSpacing: 20
-                            rowSpacing: 20
-                        
-                        // Protein
-                        NutrientStatCircle {
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            Layout.minimumWidth: 80
-                            Layout.minimumHeight: 100
-                            
-                            nutrientName: "PROTEIN"
-                            currentValue: homePage.proteinCurrent
-                            goalValue: homePage.proteinGoal
-                            nutrientColor: "#ff6b6b"
-                            unit: "g"
-                        }
-                        
-                        // Carbs
-                        NutrientStatCircle {
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            Layout.minimumWidth: 80
-                            Layout.minimumHeight: 100
-                            
-                            nutrientName: "CARBS"
-                            currentValue: homePage.carbsCurrent
-                            goalValue: homePage.carbsGoal
-                            nutrientColor: "#feca57"
-                            unit: "g"
-                        }
-                        
-                        // Fat
-                        NutrientStatCircle {
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            Layout.minimumWidth: 80
-                            Layout.minimumHeight: 100
-                            
-                            nutrientName: "FAT"
-                            currentValue: homePage.fatCurrent
-                            goalValue: homePage.fatGoal
-                            nutrientColor: "#54a0ff"
-                            unit: "g"
-                        }
-                        
-                        // Sugar
-                        NutrientStatCircle {
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            Layout.minimumWidth: 80
-                            Layout.minimumHeight: 100
-                            
-                            nutrientName: "SUGAR"
-                            currentValue: homePage.sugarCurrent
-                            goalValue: homePage.sugarGoal
-                            nutrientColor: "#ee5a6f"
-                            unit: "g"
+                            rowSpacing: 10
+
+                            // Protein
+                            NutrientStatCircle {
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                Layout.minimumWidth: 80
+                                Layout.minimumHeight: 100
+
+                                nutrientName: "PROTEIN"
+                                currentValue: homePage.proteinCurrent
+                                goalValue: homePage.proteinGoal
+                                nutrientColor: "#ff6b6b"
+                                unit: "g"
+                            }
+
+                            // Carbs
+                            NutrientStatCircle {
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                Layout.minimumWidth: 80
+                                Layout.minimumHeight: 100
+
+                                nutrientName: "CARBS"
+                                currentValue: homePage.carbsCurrent
+                                goalValue: homePage.carbsGoal
+                                nutrientColor: "#feca57"
+                                unit: "g"
+                            }
+
+                            // Fat
+                            NutrientStatCircle {
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                Layout.minimumWidth: 80
+                                Layout.minimumHeight: 100
+
+                                nutrientName: "FAT"
+                                currentValue: homePage.fatCurrent
+                                goalValue: homePage.fatGoal
+                                nutrientColor: "#54a0ff"
+                                unit: "g"
+                            }
+
+                            // Sugar
+                            NutrientStatCircle {
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                Layout.minimumWidth: 80
+                                Layout.minimumHeight: 100
+
+                                nutrientName: "SUGAR"
+                                currentValue: homePage.sugarCurrent
+                                goalValue: homePage.sugarGoal
+                                nutrientColor: "#ee5a6f"
+                                unit: "g"
+                            }
                         }
                     }
-                }
                     
 
                     Item { Layout.fillHeight: true }
-                }
-            }
-        }
-
-        // ==============================================
-        // WIDGETS ROW - 4 columns with equal width
-        // ==============================================
-        RowLayout {
-            id: widgetsRow
-
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            Layout.preferredHeight: parent.height * 0.70
-            Layout.minimumHeight: 120
-
-            spacing: 15
-
-            // Essential Widget 1 - Activity & Movement Stats
-            Rectangle {
-                id: essential_Widget1
-
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-
-                color: "#004a7c"
-                radius: 8
-
-                ColumnLayout {
-                    anchors.fill: parent
-                    anchors.margins: 15
-                    spacing: 12
-
-                    // Widget Title
-                    Text {
-                        text: "ACTIVITY"
-                        color: "#88c8ff"
-                        font.pixelSize: 14
-                        font.family: "PoetsenOne"
-                        font.letterSpacing: 2
-                    }
-
-                    // Steps Progress (Main Stat)
-                    Item {
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        Layout.maximumHeight: parent.height * 0.4
-
-                        Column {
-                            anchors.centerIn: parent
-                            spacing: 4
-
-                            Text {
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                text: homePage.stepsToday.toLocaleString()
-                                color: "#ffffff"
-                                font.pixelSize: 36
-                                font.family: "PoetsenOne"
-                                font.weight: Font.Bold
-                            }
-
-                            Text {
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                text: "/ " + homePage.stepsGoal.toLocaleString() + " steps"
-                                color: "#88c8ff"
-                                font.pixelSize: 14
-                                font.family: "PoetsenOne"
-                            }
-
-                            // Steps Progress Bar
-                            Rectangle {
-                                width: 120
-                                height: 6
-                                radius: 3
-                                color: "#003366"
-                                anchors.horizontalCenter: parent.horizontalCenter
-
-                                Rectangle {
-                                    width: parent.width * Math.min(homePage.stepsToday / homePage.stepsGoal, 1)
-                                    height: parent.height
-                                    radius: 3
-                                    color: homePage.stepsToday >= homePage.stepsGoal ? "#4CAF50" : "#00a8ff"
-                                    
-                                    Behavior on width { NumberAnimation { duration: 300 } }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                HandCursor {
-                    // Signal handler: Click for detailed activity view
-                    onClicked:
-                        console.log("Signal: Activity widget clicked - Steps:", homePage.stepsToday)
-                }
-            }
-
-            // Essential Widget 2 (shorter, aligned to top)
-            ColumnLayout {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                spacing: 15
-
-                // Small widget - Quick Stats Summary
-                Rectangle {
-                    id: widget_blue
-
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-
-                    color: "#2d5a30"
-                    radius: 8
-
-                    ColumnLayout {
-                        anchors.fill: parent
-                        anchors.margins: 12
-                        spacing: 8
-
-                        Text {
-                            text: "STREAK"
-                            color: "#88ff88"
-                            font.pixelSize: 11
-                            font.family: "PoetsenOne"
-                            font.letterSpacing: 2
-                        }
-                        
-                        Item { Layout.fillHeight: true }
-
-                        Text {
-                            text: "7"
-                            color: "#ffffff"
-                            font.pixelSize: 42
-                            font.family: "PoetsenOne"
-                            font.weight: Font.Bold
-                            Layout.alignment: Qt.AlignHCenter
-                        }
-
-                        Text {
-                            text: "days in a row!"
-                            color: "#88ff88"
-                            font.pixelSize: 12
-                            font.family: "PoetsenOne"
-                            Layout.alignment: Qt.AlignHCenter
-                        }
-                        
-                        Item { Layout.fillHeight: true }
-                    }
-
-                    HandCursor {
-                        // Signal handler: Click streak widget
-                        onClicked: {
-                            console.log("Signal: Streak widget clicked - 7 day streak!")
-                        }
-                    }
-                }
-
-                // Small widget - Quick Stats Summary
-                Rectangle {
-
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-
-                    color: "#2d5a30"
-                    radius: 8
-
-                    ColumnLayout {
-                        anchors.fill: parent
-                        anchors.margins: 12
-                        spacing: 8
-
-                        Text {
-                            text: "STREAK"
-                            color: "#88ff88"
-                            font.pixelSize: 11
-                            font.family: "PoetsenOne"
-                            font.letterSpacing: 2
-                        }
-
-                        Item { Layout.fillHeight: true }
-
-                        Text {
-                            text: "7"
-                            color: "#ffffff"
-                            font.pixelSize: 42
-                            font.family: "PoetsenOne"
-                            font.weight: Font.Bold
-                            Layout.alignment: Qt.AlignHCenter
-                        }
-
-                        Text {
-                            text: "days in a row!"
-                            color: "#88ff88"
-                            font.pixelSize: 12
-                            font.family: "PoetsenOne"
-                            Layout.alignment: Qt.AlignHCenter
-                        }
-
-                        Item { Layout.fillHeight: true }
-                    }
-
-                    HandCursor {
-                        // Signal handler: Click streak widget
-                        onClicked: {
-                            console.log("Signal: Streak widget clicked - 7 day streak!")
-                        }
-                    }
-                }
-            }
-
-            // Essential Widget 3 - Health & Wellness Stats
-            Rectangle {
-                id: essential_Widget2
-
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-
-                color: "#6b002a"
-                radius: 8
-
-                ColumnLayout {
-                    anchors.fill: parent
-                    anchors.margins: 15
-                    spacing: 12
-
-                    // Widget Title
-                    Text {
-                        text: "Prepared Widget for use"
-                        color: "#ffaacc"
-                        font.pixelSize: 14
-                        font.family: "PoetsenOne"
-                        font.letterSpacing: 2
-                    }
-                }
-
-                HandCursor {
-                    // Signal handler: Click for detailed health view
-                    onClicked: {
-                        console.log("Signal: Health widget clicked - HR:", homePage.heartRateAvg, "BPM")
-                    }
                 }
             }
         }

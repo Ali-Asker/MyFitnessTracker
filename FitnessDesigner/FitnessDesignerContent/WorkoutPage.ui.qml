@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Shapes
 import QtQuick.Layouts
 import QtQuick.Controls
-import FitnessDesigner 1.0
 
 Rectangle {
     id: workoutPage
@@ -14,27 +13,36 @@ Rectangle {
     // ==========================================
     property string userName: "User"
     property int maxWorkouts: 12
-    
+
     // Form state
     property bool showingForm: false
-    property string formTitle: ""
-    property int formReps: 10
-    property int formSets: 3
-    property int formDuration: 45
-    property string formWorkoutType: "chest"  // chest, leg, arm
-    
+    property string formTitle: ""   // Default values for new workouts
+    property int formReps: 8        // Default values for new workouts
+    property int formSets: 2        // Default values for new workouts
+    property int formDuration: 30   // in minutes
+    property string formWorkoutType: "Strength"  // Strength, Yoga, Cardio
+    property date formDate: new Date()  // Calendar date for workout
+
+    // Yoga-specific properties
+    property string formYogaStyle: ""   // Name of yoga style
+    property string formYogaIntensity: "Medium"  // Low, Medium, Heavy
+
+    // Cardio-specific properties
+    property string formCardioType: ""  // "Distance" or "RepBased"
+    property double formCardioDistance: 0  // Distance in km/miles
+
     // Workout type colors
     readonly property var workoutColors: ({
-        "chest": "#c62828",   // Red
-        "leg": "#ef6c00",     // Orange  
-        "arm": "#1565c0"      // Blue
-    })
-    
+                                              "Strength": "#c62828",
+                                              "Yoga": "#e100f5",
+                                              "Cardio": "#1565c0"
+                                          })
+
     readonly property var workoutIcons: ({
-        "chest": "🏋️",
-        "leg": "🦵", 
-        "arm": "💪"
-    })
+                                             "Strength": "🏋️",
+                                             "Yoga": "🧘‍♀️",
+                                             "Cardio": "🏃‍♂️"
+                                         })
 
     // Signal for HomePage connection
     signal workoutUpdated(int totalWorkouts, int totalDuration, int caloriesBurned)
@@ -42,54 +50,6 @@ Rectangle {
     // ==========================================
     // HELPER FUNCTIONS
     // ==========================================
-    function getGreeting() {
-        var hour = new Date().getHours()
-        if (hour < 12) return "Good Morning"
-        if (hour < 17) return "Good Afternoon"
-        return "Good Evening"
-    }
-
-    function clearForm() {
-        formTitle = ""
-        formReps = 10
-        formSets = 3
-        formDuration = 45
-        formWorkoutType = "chest"
-        showingForm = false
-    }
-
-    function saveWorkout() {
-        if (formTitle.trim() === "" || workoutsModel.count >= maxWorkouts) return
-        
-        workoutsModel.append({
-            "id": Date.now().toString(),
-            "title": formTitle.trim(),
-            "reps": formReps,
-            "sets": formSets,
-            "duration": formDuration,
-            "workoutType": formWorkoutType,
-            "date": new Date().toISOString()
-        })
-        
-        updateHomePageStats()
-        clearForm()
-    }
-
-    function deleteWorkout(index) {
-        workoutsModel.remove(index)
-        updateHomePageStats()
-    }
-
-    function updateHomePageStats() {
-        var totalDuration = 0
-        for (var i = 0; i < workoutsModel.count; i++) {
-            totalDuration += workoutsModel.get(i).duration
-        }
-        // Estimate calories: ~5 cal per minute of exercise
-        var caloriesBurned = totalDuration * 5
-        workoutUpdated(workoutsModel.count, totalDuration, caloriesBurned)
-    }
-
     function formatDuration(mins) {
         if (mins < 60) return mins + " min"
         var hours = Math.floor(mins / 60)
@@ -98,11 +58,33 @@ Rectangle {
         return hours + "h " + remaining + "m"
     }
 
+    function formatDate(d) {
+        var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        return months[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear()
+    }
+
+    function workoutMatchesQuery(title, workoutType) {
+        var query = workoutSearchField.text.trim().toLowerCase()
+        if (query.length === 0)
+            return true
+
+        var normalizedTitle = (title || "").toLowerCase()
+        var normalizedType = (workoutType || "").toLowerCase()
+        return normalizedTitle.indexOf(query) !== -1 || normalizedType.indexOf(query) !== -1
+    }
+
+    function clearAllWorkouts() {
+        workoutsModel.clear()
+        showingForm = false
+        workoutSearchField.text = ""
+        workoutUpdated(0, 0, 0)
+    }
+
     // ==========================================
     // DATA MODEL
     // ==========================================
     property alias workoutsModel: workoutsModelInternal
-    
+
     ListModel {
         id: workoutsModelInternal
     }
@@ -110,7 +92,7 @@ Rectangle {
     // ==========================================
     // UI
     // ==========================================
-    
+
     // Greeting text at top
     PageHeaderText {
         id: greetingText
@@ -125,7 +107,76 @@ Rectangle {
         height: Math.max(40, parent.height * 0.06)
 
         font.pixelSize: Math.max(24, Math.min(36, parent.width / 30))
-        text: getGreeting() + ", " + userName + "!"
+        text: "Workout Bar!"
+    }
+
+    Rectangle {
+        id: workoutSearchContainer
+
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: greetingText.verticalCenter
+        width: Math.min(parent.width * 0.36, 320)
+        height: Math.max(38, parent.height * 0.05)
+        radius: height / 2
+        color: workoutSearchField.activeFocus ? "#33353a" : "#2d2f34"
+        border.width: workoutSearchField.activeFocus ? 2 : 1
+        border.color: workoutSearchField.activeFocus ? "#4fc3f7" : "#4a4d52"
+        opacity: 0.95
+
+        Behavior on border.color { ColorAnimation { duration: 120 } }
+        Behavior on color { ColorAnimation { duration: 120 } }
+
+        TextInput {
+            id: workoutSearchField
+            anchors.fill: parent
+            anchors.leftMargin: 12
+            anchors.rightMargin: 12
+            color: "#ffffff"
+            font.family: "Segoe UI"
+            font.pixelSize: Math.max(12, Math.min(16, parent.width / 18))
+            verticalAlignment: TextInput.AlignVCenter
+            clip: true
+
+            Text {
+                anchors.fill: parent
+                text: "Search workouts"
+                color: "#9ea3aa"
+                font.family: "Segoe UI"
+                font.pixelSize: workoutSearchField.font.pixelSize
+                verticalAlignment: Text.AlignVCenter
+                visible: !workoutSearchField.text && !workoutSearchField.activeFocus
+            }
+        }
+    }
+
+    Rectangle {
+        id: clearWorkoutsButton
+
+        anchors.left: workoutSearchContainer.right
+        anchors.leftMargin: 10
+        anchors.verticalCenter: workoutSearchContainer.verticalCenter
+        width: Math.max(68, parent.width * 0.07)
+        height: workoutSearchContainer.height
+        radius: height / 2
+
+        color: clearBtnArea.pressed ? "#b71c1c" : (clearBtnArea.containsMouse ? "#d32f2f" : "#c62828")
+
+        Behavior on color { ColorAnimation { duration: 120 } }
+
+        Text {
+            anchors.centerIn: parent
+            text: "Clear"
+            color: "#ffffff"
+            font.family: "PoetsenOne"
+            font.pixelSize: Math.max(12, Math.min(15, parent.width / 4))
+            font.weight: Font.Bold
+        }
+
+        HandCursor {
+            id: clearBtnArea
+            anchors.fill: parent
+            onClicked: clearAllWorkouts()
+        }
     }
 
     // Main content area - dynamic grid
@@ -154,10 +205,11 @@ Rectangle {
                 id: workoutWidget
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                
+                visible: workoutMatchesQuery(model.title, model.workoutType)
+
                 color: workoutColors[model.workoutType] || "#004a7c"
                 radius: 8
-                
+
                 // Delete button (circular X)
                 Rectangle {
                     id: deleteBtn
@@ -170,9 +222,9 @@ Rectangle {
                     radius: width / 2
                     color: deleteBtnArea.pressed ? "#ff1744" : (deleteBtnArea.containsMouse ? "#ff5252" : "#d32f2f")
                     z: 10
-                    
+
                     Behavior on color { ColorAnimation { duration: 150 } }
-                    
+
                     Text {
                         anchors.centerIn: parent
                         text: "×"
@@ -180,27 +232,27 @@ Rectangle {
                         font.pixelSize: parent.width * 0.7
                         font.weight: Font.Bold
                     }
-                    
+
                     HandCursor {
                         id: deleteBtnArea
                         onClicked: deleteWorkout(index)
                     }
                 }
-                
+
                 // Workout info
                 ColumnLayout {
                     anchors.fill: parent
                     anchors.margins: Math.max(10, parent.width * 0.06)
                     anchors.topMargin: Math.max(8, parent.width * 0.08)
                     spacing: 6
-                    
+
                     // Icon
                     Text {
                         text: workoutIcons[model.workoutType] || "🏃"
                         font.pixelSize: Math.max(24, workoutWidget.width * 0.22)
                         Layout.alignment: Qt.AlignHCenter
                     }
-                    
+
                     // Title
                     Text {
                         text: model.title
@@ -212,22 +264,22 @@ Rectangle {
                         elide: Text.ElideRight
                         Layout.fillWidth: true
                     }
-                    
+
                     Item { Layout.fillHeight: true }
-                    
+
                     // Modern stats row with badges
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.alignment: Qt.AlignHCenter
                         spacing: 6
-                        
+
                         // Reps badge
                         Rectangle {
                             color: Qt.rgba(1, 1, 1, 0.2)
                             radius: 4
                             implicitWidth: repsLabel.width + 10
                             implicitHeight: repsLabel.height + 6
-                            
+
                             Text {
                                 id: repsLabel
                                 anchors.centerIn: parent
@@ -238,14 +290,14 @@ Rectangle {
                                 font.weight: Font.Medium
                             }
                         }
-                        
+
                         // Sets badge
                         Rectangle {
                             color: Qt.rgba(1, 1, 1, 0.2)
                             radius: 4
                             implicitWidth: setsLabel.width + 10
                             implicitHeight: setsLabel.height + 6
-                            
+
                             Text {
                                 id: setsLabel
                                 anchors.centerIn: parent
@@ -257,17 +309,17 @@ Rectangle {
                             }
                         }
                     }
-                    
+
                     // Duration with icon
                     Row {
                         Layout.alignment: Qt.AlignHCenter
                         spacing: 4
-                        
+
                         Text {
                             text: "⏱"
                             font.pixelSize: Math.max(10, Math.min(12, workoutWidget.width / 14))
                         }
-                        
+
                         Text {
                             text: formatDuration(model.duration)
                             color: Qt.rgba(1, 1, 1, 0.75)
@@ -286,17 +338,17 @@ Rectangle {
             Layout.fillWidth: true
             Layout.fillHeight: true
             visible: workoutsModel.count < maxWorkouts
-            
+
             color: showingForm ? "#0277bd" : (addWidgetArea.pressed ? "#5a5959" : (addWidgetArea.containsMouse ? "#929191" : "#828181"))
             radius: 8
-            
+
             Behavior on color { ColorAnimation { duration: 150 } }
 
             // Add Widget Button (shown when not adding)
             Item {
                 anchors.fill: parent
                 visible: !showingForm
-                
+
                 Column {
                     anchors.centerIn: parent
                     spacing: 10
@@ -390,20 +442,22 @@ Rectangle {
                     Layout.maximumHeight: parent.height * 0.55
                     spacing: 12
 
-                    // Left column: Dropdowns (narrower)
+                    // Left column: Dynamic inputs based on workout type
                     ColumnLayout {
                         Layout.fillHeight: true
                         Layout.fillWidth: true
                         Layout.preferredWidth: 300
                         Layout.maximumWidth: 400
-                        spacing: 8
+                        spacing: 6
 
-                        // Reps Dropdown
+                        // Calendar Date Selector (for all workout types)
                         Rectangle {
                             Layout.fillWidth: true
-                            Layout.preferredHeight: Math.max(24, parent.height * 0.28)
+                            Layout.preferredHeight: Math.max(24, parent.height * 0.22)
                             color: "#ffffff"
                             radius: 4
+                            border.color: "#cccccc"
+                            border.width: 1
 
                             RowLayout {
                                 anchors.fill: parent
@@ -412,9 +466,13 @@ Rectangle {
                                 spacing: 4
 
                                 Text {
-                                    text: "Reps: " + formReps
+                                    text: "📅"
+                                    font.pixelSize: 14
+                                }
+                                Text {
+                                    text: formatDate(formDate)
                                     color: "#333333"
-                                    font.pixelSize: Math.max(10, Math.min(13, parent.width / 12))
+                                    font.pixelSize: Math.max(10, Math.min(13, parent.width / 14))
                                     font.family: "PoetsenOne"
                                     Layout.fillWidth: true
                                 }
@@ -427,16 +485,20 @@ Rectangle {
 
                             HandCursor {
                                 anchors.fill: parent
-                                onClicked: repsPopup.open()
+                                onClicked: calendarPopup.open()
                             }
                         }
 
-                        // Sets Dropdown
+                        // === STRENGTH INPUTS ===
+                        // Reps Input (Strength only)
                         Rectangle {
+                            visible: formWorkoutType === "Strength" || (formWorkoutType === "Cardio" && formCardioType === "RepBased")
                             Layout.fillWidth: true
-                            Layout.preferredHeight: Math.max(24, parent.height * 0.28)
+                            Layout.preferredHeight: visible ? Math.max(24, parent.height * 0.22) : 0
                             color: "#ffffff"
                             radius: 4
+                            border.color: repsField.activeFocus ? "#1976d2" : "#cccccc"
+                            border.width: 1
 
                             RowLayout {
                                 anchors.fill: parent
@@ -445,31 +507,39 @@ Rectangle {
                                 spacing: 4
 
                                 Text {
-                                    text: "Sets: " + formSets
+                                    text: "Reps:"
                                     color: "#333333"
                                     font.pixelSize: Math.max(10, Math.min(13, parent.width / 12))
                                     font.family: "PoetsenOne"
-                                    Layout.fillWidth: true
                                 }
-                                Text {
-                                    text: "▼"
-                                    color: "#666666"
-                                    font.pixelSize: 10
-                                }
-                            }
 
-                            HandCursor {
-                                anchors.fill: parent
-                                onClicked: setsPopup.open()
+                                TextField {
+                                    id: repsField
+                                    Layout.fillWidth: true
+                                    text: formReps.toString()
+                                    color: "#333333"
+                                    font.pixelSize: Math.max(10, Math.min(13, parent.width / 12))
+                                    font.family: "PoetsenOne"
+                                    validator: IntValidator { bottom: 1; top: 999 }
+                                    background: Rectangle { color: "transparent" }
+                                    onTextChanged: {
+                                        if (text !== "" && acceptableInput) {
+                                            formReps = parseInt(text)
+                                        }
+                                    }
+                                }
                             }
                         }
 
-                        // Duration Dropdown
+                        // Sets Input (Strength only)
                         Rectangle {
+                            visible: formWorkoutType === "Strength" || (formWorkoutType === "Cardio" && formCardioType === "RepBased")
                             Layout.fillWidth: true
-                            Layout.preferredHeight: Math.max(24, parent.height * 0.28)
+                            Layout.preferredHeight: visible ? Math.max(24, parent.height * 0.22) : 0
                             color: "#ffffff"
                             radius: 4
+                            border.color: setsField.activeFocus ? "#1976d2" : "#cccccc"
+                            border.width: 1
 
                             RowLayout {
                                 anchors.fill: parent
@@ -478,7 +548,92 @@ Rectangle {
                                 spacing: 4
 
                                 Text {
-                                    text: formatDuration(formDuration)
+                                    text: "Sets:"
+                                    color: "#333333"
+                                    font.pixelSize: Math.max(10, Math.min(13, parent.width / 12))
+                                    font.family: "PoetsenOne"
+                                }
+
+                                TextField {
+                                    id: setsField
+                                    Layout.fillWidth: true
+                                    text: formSets.toString()
+                                    color: "#333333"
+                                    font.pixelSize: Math.max(10, Math.min(13, parent.width / 12))
+                                    font.family: "PoetsenOne"
+                                    validator: IntValidator { bottom: 1; top: 999 }
+                                    background: Rectangle { color: "transparent" }
+                                    onTextChanged: {
+                                        if (text !== "" && acceptableInput) {
+                                            formSets = parseInt(text)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        // === YOGA INPUTS ===
+                        // Style Input (Yoga only)
+                        Rectangle {
+                            visible: formWorkoutType === "Yoga"
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: visible ? Math.max(24, parent.height * 0.22) : 0
+                            color: "#ffffff"
+                            radius: 4
+                            border.color: styleField.activeFocus ? "#1976d2" : "#cccccc"
+                            border.width: 1
+
+                            RowLayout {
+                                anchors.fill: parent
+                                anchors.leftMargin: 8
+                                anchors.rightMargin: 8
+                                spacing: 4
+
+                                Text {
+                                    text: "Style:"
+                                    color: "#333333"
+                                    font.pixelSize: Math.max(10, Math.min(13, parent.width / 12))
+                                    font.family: "PoetsenOne"
+                                }
+
+                                TextField {
+                                    id: styleField
+                                    Layout.fillWidth: true
+                                    text: formYogaStyle
+                                    color: "#333333"
+                                    font.pixelSize: Math.max(10, Math.min(13, parent.width / 12))
+                                    font.family: "PoetsenOne"
+                                    placeholderText: "e.g. Vinyasa"
+                                    background: Rectangle { color: "transparent" }
+                                    onTextChanged: formYogaStyle = text
+                                }
+                            }
+                        }
+
+                        // Intensity Dropdown (Yoga only)
+                        Rectangle {
+                            visible: formWorkoutType === "Yoga"
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: visible ? Math.max(24, parent.height * 0.22) : 0
+                            color: "#ffffff"
+                            radius: 4
+                            border.color: "#cccccc"
+                            border.width: 1
+
+                            RowLayout {
+                                anchors.fill: parent
+                                anchors.leftMargin: 8
+                                anchors.rightMargin: 8
+                                spacing: 4
+
+                                Text {
+                                    text: "Intensity:"
+                                    color: "#333333"
+                                    font.pixelSize: Math.max(10, Math.min(13, parent.width / 12))
+                                    font.family: "PoetsenOne"
+                                }
+                                Text {
+                                    text: formYogaIntensity
                                     color: "#333333"
                                     font.pixelSize: Math.max(10, Math.min(13, parent.width / 12))
                                     font.family: "PoetsenOne"
@@ -493,7 +648,165 @@ Rectangle {
 
                             HandCursor {
                                 anchors.fill: parent
-                                onClicked: durationPopup.open()
+                                onClicked: intensityPopup.open()
+                            }
+                        }
+
+                        // === CARDIO INPUTS ===
+                        // Cardio Type Selector (Cardio only - shows when no type selected)
+                        Rectangle {
+                            visible: formWorkoutType === "Cardio" && formCardioType === ""
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: visible ? Math.max(24, parent.height * 0.22) : 0
+                            color: "#1976d2"
+                            radius: 4
+
+                            RowLayout {
+                                anchors.fill: parent
+                                anchors.leftMargin: 8
+                                anchors.rightMargin: 8
+                                spacing: 4
+
+                                Text {
+                                    text: "Select Cardio Type..."
+                                    color: "#ffffff"
+                                    font.pixelSize: Math.max(10, Math.min(13, parent.width / 12))
+                                    font.family: "PoetsenOne"
+                                    Layout.fillWidth: true
+                                }
+                                Text {
+                                    text: "▼"
+                                    color: "#ffffff"
+                                    font.pixelSize: 10
+                                }
+                            }
+
+                            HandCursor {
+                                anchors.fill: parent
+                                onClicked: cardioTypePopup.open()
+                            }
+                        }
+
+                        // Cardio Type Display (when type is selected)
+                        Rectangle {
+                            visible: formWorkoutType === "Cardio" && formCardioType !== ""
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: visible ? Math.max(24, parent.height * 0.22) : 0
+                            color: "#ffffff"
+                            radius: 4
+                            border.color: "#cccccc"
+                            border.width: 1
+
+                            RowLayout {
+                                anchors.fill: parent
+                                anchors.leftMargin: 8
+                                anchors.rightMargin: 8
+                                spacing: 4
+
+                                Text {
+                                    text: "Type:"
+                                    color: "#333333"
+                                    font.pixelSize: Math.max(10, Math.min(13, parent.width / 12))
+                                    font.family: "PoetsenOne"
+                                }
+                                Text {
+                                    text: formCardioType === "Distance" ? "Distance Cardio" : "Rep Based Cardio"
+                                    color: "#333333"
+                                    font.pixelSize: Math.max(10, Math.min(13, parent.width / 12))
+                                    font.family: "PoetsenOne"
+                                    Layout.fillWidth: true
+                                }
+                                Text {
+                                    text: "▼"
+                                    color: "#666666"
+                                    font.pixelSize: 10
+                                }
+                            }
+
+                            HandCursor {
+                                anchors.fill: parent
+                                onClicked: cardioTypePopup.open()
+                            }
+                        }
+
+                        // Distance Input (Cardio Distance only)
+                        Rectangle {
+                            visible: formWorkoutType === "Cardio" && formCardioType === "Distance"
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: visible ? Math.max(24, parent.height * 0.22) : 0
+                            color: "#ffffff"
+                            radius: 4
+                            border.color: distanceField.activeFocus ? "#1976d2" : "#cccccc"
+                            border.width: 1
+
+                            RowLayout {
+                                anchors.fill: parent
+                                anchors.leftMargin: 8
+                                anchors.rightMargin: 8
+                                spacing: 4
+
+                                Text {
+                                    text: "Distance (km):"
+                                    color: "#333333"
+                                    font.pixelSize: Math.max(10, Math.min(13, parent.width / 12))
+                                    font.family: "PoetsenOne"
+                                }
+
+                                TextField {
+                                    id: distanceField
+                                    Layout.fillWidth: true
+                                    text: formCardioDistance > 0 ? formCardioDistance.toString() : ""
+                                    color: "#333333"
+                                    font.pixelSize: Math.max(10, Math.min(13, parent.width / 12))
+                                    font.family: "PoetsenOne"
+                                    validator: DoubleValidator { bottom: 0.1; top: 999; decimals: 2 }
+                                    background: Rectangle { color: "transparent" }
+                                    onTextChanged: {
+                                        if (text !== "" && acceptableInput) {
+                                            formCardioDistance = parseFloat(text)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        // Duration Input (for all types)
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: Math.max(24, parent.height * 0.22)
+                            color: "#ffffff"
+                            radius: 4
+                            border.color: durationField.activeFocus ? "#1976d2" : "#cccccc"
+                            border.width: 1
+
+                            RowLayout {
+                                anchors.fill: parent
+                                anchors.leftMargin: 8
+                                anchors.rightMargin: 8
+                                spacing: 4
+
+                                Text {
+                                    text: "Duration (min):"
+                                    color: "#333333"
+                                    font.pixelSize: Math.max(10, Math.min(13, parent.width / 12))
+                                    font.family: "PoetsenOne"
+                                }
+
+                                TextField {
+                                    id: durationField
+                                    Layout.fillWidth: true
+                                    text: formDuration.toString()
+                                    color: "#333333"
+                                    font.pixelSize: Math.max(10, Math.min(13, parent.width / 12))
+                                    font.family: "PoetsenOne"
+                                    validator: IntValidator { bottom: 1; top: 999 }
+                                    background: Rectangle { color: "transparent" }
+                                    onTextChanged: {
+                                        if (text !== "" && acceptableInput) {
+                                            formDuration = parseInt(text)
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -596,7 +909,7 @@ Rectangle {
         // Empty placeholders to maintain grid when few workouts
         Repeater {
             model: Math.max(0, 11 - workoutsModel.count - (workoutsModel.count < maxWorkouts ? 1 : 0))
-            
+
             Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -608,193 +921,6 @@ Rectangle {
     // POPUPS
     // ==========================================
 
-    // Reps Popup (1-30)
-    Popup {
-        id: repsPopup
-        x: (parent.width - width) / 2
-        y: (parent.height - height) / 2
-        width: 200
-        height: 300
-        modal: true
-        focus: true
-        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-
-        background: Rectangle {
-            color: "#2d2d2d"
-            radius: 8
-            border.color: "#474747"
-            border.width: 2
-        }
-
-        ColumnLayout {
-            anchors.fill: parent
-            anchors.margins: 10
-            spacing: 5
-
-            Text {
-                text: "Select Reps"
-                color: "#ffffff"
-                font.family: "PoetsenOne"
-                font.pixelSize: 16
-                Layout.alignment: Qt.AlignHCenter
-            }
-
-            ListView {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                clip: true
-                model: 30
-
-                delegate: Rectangle {
-                    width: parent ? parent.width : 0
-                    height: 30
-                    color: repsItemArea.containsMouse ? "#444444" : "transparent"
-                    radius: 4
-
-                    Text {
-                        anchors.centerIn: parent
-                        text: (index + 1) + " reps"
-                        color: "#ffffff"
-                        font.family: "PoetsenOne"
-                        font.pixelSize: 14
-                    }
-
-                    HandCursor {
-                        id: repsItemArea
-                        onClicked: {
-                            formReps = index + 1
-                            repsPopup.close()
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    // Sets Popup (1-5)
-    Popup {
-        id: setsPopup
-        x: (parent.width - width) / 2
-        y: (parent.height - height) / 2
-        width: 180
-        height: 280
-        modal: true
-        focus: true
-        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-
-        background: Rectangle {
-            color: "#2d2d2d"
-            radius: 8
-            border.color: "#474747"
-            border.width: 2
-        }
-
-        ColumnLayout {
-            anchors.fill: parent
-            anchors.margins: 12
-            spacing: 8
-
-            Text {
-                text: "Select Sets"
-                color: "#ffffff"
-                font.family: "PoetsenOne"
-                font.pixelSize: 16
-                Layout.alignment: Qt.AlignHCenter
-            }
-
-            Repeater {
-                model: 5
-
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 36
-                    color: setsItemArea.containsMouse ? "#444444" : "#3d3d3d"
-                    radius: 4
-
-                    Text {
-                        anchors.centerIn: parent
-                        text: (index + 1) + " set" + (index > 0 ? "s" : "")
-                        color: "#ffffff"
-                        font.family: "PoetsenOne"
-                        font.pixelSize: 14
-                    }
-
-                    HandCursor {
-                        id: setsItemArea
-                        onClicked: {
-                            formSets = index + 1
-                            setsPopup.close()
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    // Duration Popup (15 min intervals, max 2 hours)
-    Popup {
-        id: durationPopup
-        x: (parent.width - width) / 2
-        y: (parent.height - height) / 2
-        width: 200
-        height: 320
-        modal: true
-        focus: true
-        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-
-        background: Rectangle {
-            color: "#2d2d2d"
-            radius: 8
-            border.color: "#474747"
-            border.width: 2
-        }
-
-        ColumnLayout {
-            anchors.fill: parent
-            anchors.margins: 10
-            spacing: 5
-
-            Text {
-                text: "Select Duration"
-                color: "#ffffff"
-                font.family: "PoetsenOne"
-                font.pixelSize: 16
-                Layout.alignment: Qt.AlignHCenter
-            }
-
-            ListView {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                clip: true
-                model: [15, 30, 45, 60, 75, 90, 105, 120]
-
-                delegate: Rectangle {
-                    width: parent ? parent.width : 0
-                    height: 32
-                    color: durationItemArea.containsMouse ? "#444444" : "transparent"
-                    radius: 4
-
-                    Text {
-                        anchors.centerIn: parent
-                        text: formatDuration(modelData)
-                        color: "#ffffff"
-                        font.family: "PoetsenOne"
-                        font.pixelSize: 14
-                    }
-
-                    HandCursor {
-                        id: durationItemArea
-                        onClicked: {
-                            formDuration = modelData
-                            durationPopup.close()
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    // Workout Type Popup (Chest, Leg, Arm)
     Popup {
         id: typePopup
         x: (parent.width - width) / 2
@@ -830,11 +956,11 @@ Rectangle {
                 Layout.fillHeight: true
                 spacing: 15
 
-                // Chest
+                // Strength
                 Rectangle {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    color: chestArea.containsMouse ? "#d32f2f" : "#c62828"
+                    color: strengthArea.containsMouse ? "#d32f2f" : "#c62828"
                     radius: 8
 
                     Behavior on color { ColorAnimation { duration: 150 } }
@@ -850,7 +976,7 @@ Rectangle {
                         }
                         Text {
                             anchors.horizontalCenter: parent.horizontalCenter
-                            text: "Chest"
+                            text: "Strength"
                             color: "#ffffff"
                             font.family: "PoetsenOne"
                             font.pixelSize: 14
@@ -858,19 +984,19 @@ Rectangle {
                     }
 
                     HandCursor {
-                        id: chestArea
+                        id: strengthArea
                         onClicked: {
-                            formWorkoutType = "chest"
+                            formWorkoutType = "Strength"
                             typePopup.close()
                         }
                     }
                 }
 
-                // Leg
+                // Yoga
                 Rectangle {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    color: legArea.containsMouse ? "#f57c00" : "#ef6c00"
+                    color: yogaArea.containsMouse ? '#e100f5' : "#e100f5"
                     radius: 8
 
                     Behavior on color { ColorAnimation { duration: 150 } }
@@ -881,12 +1007,12 @@ Rectangle {
 
                         Text {
                             anchors.horizontalCenter: parent.horizontalCenter
-                            text: "🦵"
+                            text: "🧘‍♀️"
                             font.pixelSize: 32
                         }
                         Text {
                             anchors.horizontalCenter: parent.horizontalCenter
-                            text: "Leg"
+                            text: "Yoga"
                             color: "#ffffff"
                             font.family: "PoetsenOne"
                             font.pixelSize: 14
@@ -894,19 +1020,19 @@ Rectangle {
                     }
 
                     HandCursor {
-                        id: legArea
+                        id: yogaArea
                         onClicked: {
-                            formWorkoutType = "leg"
+                            formWorkoutType = "Yoga"
                             typePopup.close()
                         }
                     }
                 }
 
-                // Arm
+                // Cardio
                 Rectangle {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    color: armArea.containsMouse ? "#1976d2" : "#1565c0"
+                    color: cardioArea.containsMouse ? "#1976d2" : "#1565c0"
                     radius: 8
 
                     Behavior on color { ColorAnimation { duration: 150 } }
@@ -917,12 +1043,12 @@ Rectangle {
 
                         Text {
                             anchors.horizontalCenter: parent.horizontalCenter
-                            text: "💪"
+                            text: "🏃‍♂️"
                             font.pixelSize: 32
                         }
                         Text {
                             anchors.horizontalCenter: parent.horizontalCenter
-                            text: "Arm"
+                            text: "Cardio"
                             color: "#ffffff"
                             font.family: "PoetsenOne"
                             font.pixelSize: 14
@@ -930,10 +1056,248 @@ Rectangle {
                     }
 
                     HandCursor {
-                        id: armArea
+                        id: cardioArea
                         onClicked: {
-                            formWorkoutType = "arm"
+                            formWorkoutType = "Cardio"
+                            formCardioType = ""  // Reset cardio type to show selection
                             typePopup.close()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    // Intensity Popup (for Yoga)
+    Popup {
+        id: intensityPopup
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+        width: 280
+        height: 200
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+
+        background: Rectangle {
+            color: "#2d2d2d"
+            radius: 10
+            border.color: "#474747"
+            border.width: 2
+        }
+
+        ColumnLayout {
+            anchors.fill: parent
+            anchors.margins: 15
+            spacing: 12
+
+            Text {
+                text: "Select Intensity"
+                color: "#ffffff"
+                font.family: "PoetsenOne"
+                font.pixelSize: 18
+                Layout.alignment: Qt.AlignHCenter
+            }
+
+            // Low
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 40
+                color: lowArea.containsMouse ? "#388e3c" : "#4caf50"
+                radius: 6
+
+                Behavior on color { ColorAnimation { duration: 150 } }
+
+                Text {
+                    anchors.centerIn: parent
+                    text: "🌿 Low"
+                    color: "#ffffff"
+                    font.family: "PoetsenOne"
+                    font.pixelSize: 16
+                }
+
+                HandCursor {
+                    id: lowArea
+                    onClicked: {
+                        formYogaIntensity = "Low"
+                        intensityPopup.close()
+                    }
+                }
+            }
+
+            // Medium
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 40
+                color: mediumArea.containsMouse ? "#f57c00" : "#ff9800"
+                radius: 6
+
+                Behavior on color { ColorAnimation { duration: 150 } }
+
+                Text {
+                    anchors.centerIn: parent
+                    text: "🔥 Medium"
+                    color: "#ffffff"
+                    font.family: "PoetsenOne"
+                    font.pixelSize: 16
+                }
+
+                HandCursor {
+                    id: mediumArea
+                    onClicked: {
+                        formYogaIntensity = "Medium"
+                        intensityPopup.close()
+                    }
+                }
+            }
+
+            // Heavy
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 40
+                color: heavyArea.containsMouse ? "#c62828" : "#d32f2f"
+                radius: 6
+
+                Behavior on color { ColorAnimation { duration: 150 } }
+
+                Text {
+                    anchors.centerIn: parent
+                    text: "💪 Heavy"
+                    color: "#ffffff"
+                    font.family: "PoetsenOne"
+                    font.pixelSize: 16
+                }
+
+                HandCursor {
+                    id: heavyArea
+                    onClicked: {
+                        formYogaIntensity = "Heavy"
+                        intensityPopup.close()
+                    }
+                }
+            }
+        }
+    }
+
+    // Cardio Type Popup
+    Popup {
+        id: cardioTypePopup
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+        width: 280
+        height: 180
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+
+        background: Rectangle {
+            color: "#2d2d2d"
+            radius: 10
+            border.color: "#474747"
+            border.width: 2
+        }
+
+        ColumnLayout {
+            anchors.fill: parent
+            anchors.margins: 15
+            spacing: 15
+
+            Text {
+                text: "Select Cardio Type"
+                color: "#ffffff"
+                font.family: "PoetsenOne"
+                font.pixelSize: 18
+                Layout.alignment: Qt.AlignHCenter
+            }
+
+            RowLayout {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                spacing: 15
+
+                // Distance Cardio
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    color: distanceCardioArea.containsMouse ? "#1976d2" : "#1565c0"
+                    radius: 8
+
+                    Behavior on color { ColorAnimation { duration: 150 } }
+
+                    Column {
+                        anchors.centerIn: parent
+                        spacing: 5
+
+                        Text {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: "🏃"
+                            font.pixelSize: 32
+                        }
+                        Text {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: "Distance"
+                            color: "#ffffff"
+                            font.family: "PoetsenOne"
+                            font.pixelSize: 14
+                        }
+                        Text {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: "Cardio"
+                            color: "#cccccc"
+                            font.family: "PoetsenOne"
+                            font.pixelSize: 11
+                        }
+                    }
+
+                    HandCursor {
+                        id: distanceCardioArea
+                        onClicked: {
+                            formCardioType = "Distance"
+                            cardioTypePopup.close()
+                        }
+                    }
+                }
+
+                // Rep Based Cardio
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    color: repCardioArea.containsMouse ? "#7b1fa2" : "#9c27b0"
+                    radius: 8
+
+                    Behavior on color { ColorAnimation { duration: 150 } }
+
+                    Column {
+                        anchors.centerIn: parent
+                        spacing: 5
+
+                        Text {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: "🔄"
+                            font.pixelSize: 32
+                        }
+                        Text {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: "Rep Based"
+                            color: "#ffffff"
+                            font.family: "PoetsenOne"
+                            font.pixelSize: 14
+                        }
+                        Text {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: "Cardio"
+                            color: "#cccccc"
+                            font.family: "PoetsenOne"
+                            font.pixelSize: 11
+                        }
+                    }
+
+                    HandCursor {
+                        id: repCardioArea
+                        onClicked: {
+                            formCardioType = "RepBased"
+                            cardioTypePopup.close()
                         }
                     }
                 }

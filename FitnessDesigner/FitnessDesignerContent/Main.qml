@@ -25,8 +25,8 @@ Rectangle {
         
         // Listen for navigation requests from C++
         onNavigationRequested: (pageIndex) => {
-            mainRoot.currentPage = pageIndex
-        }
+                                   mainRoot.currentPage = pageIndex
+                               }
         
         // Listen for data changes from C++
         onNutritionChanged: {
@@ -50,9 +50,9 @@ Rectangle {
         anchors.bottom: parent.bottom
         currentPage: mainRoot.currentPage
         onNavigate: (page) => {
-            mainRoot.currentPage = page
-            handlers.navigateToPage(page)
-        }
+                        mainRoot.currentPage = page
+                        handlers.navigateToPage(page)
+                    }
     }
 
     Item {
@@ -70,8 +70,8 @@ Rectangle {
             
             // Handle navigation signal from HomePage
             onNavigateToPage: (page) => {
-                mainRoot.currentPage = page
-            }
+                                  mainRoot.currentPage = page
+                              }
         }
         NutritionPage {
             id: nutritionPage
@@ -80,12 +80,12 @@ Rectangle {
             
             // Connect nutrition updates to HomePage
             onNutritionUpdated: (calories, protein, carbs, fats, sugar) => {
-                homePage.caloriesCurrent = calories
-                homePage.proteinCurrent = protein
-                homePage.carbsCurrent = carbs
-                homePage.fatCurrent = fats
-                homePage.sugarCurrent = sugar
-            }
+                                    homePage.caloriesCurrent = calories
+                                    homePage.proteinCurrent = protein
+                                    homePage.carbsCurrent = carbs
+                                    homePage.fatCurrent = fats
+                                    homePage.sugarCurrent = sugar
+                                }
         }
         WorkoutPage {
             id: workoutPage
@@ -94,22 +94,22 @@ Rectangle {
             
             // Connect workout updates to HomePage
             onWorkoutUpdated: (totalWorkouts, totalDuration, caloriesBurned) => {
-                homePage.caloriesBurned = caloriesBurned
-                homePage.activeMinutes = totalDuration
-                // Update today's workouts list with full details
-                var workoutDetails = []
-                for (var i = 0; i < workoutPage.workoutsModel.count && i < 3; i++) {
-                    var w = workoutPage.workoutsModel.get(i)
-                    workoutDetails.push({
-                        title: w.title,
-                        reps: w.reps,
-                        sets: w.sets,
-                        duration: w.duration,
-                        workoutType: w.workoutType
-                    })
-                }
-                homePage.todaysWorkouts = workoutDetails
-            }
+                                  homePage.caloriesBurned = caloriesBurned
+                                  homePage.activeMinutes = totalDuration
+                                  // Update today's workouts list with full details
+                                  var workoutDetails = []
+                                  for (var i = 0; i < workoutPage.workoutsModel.count && i < 3; i++) {
+                                      var w = workoutPage.workoutsModel.get(i)
+                                      workoutDetails.push({
+                                                              title: w.title,
+                                                              reps: w.reps,
+                                                              sets: w.sets,
+                                                              duration: w.duration,
+                                                              workoutType: w.workoutType
+                                                          })
+                                  }
+                                  homePage.todaysWorkouts = workoutDetails
+                              }
         }
     }
 

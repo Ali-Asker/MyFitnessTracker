@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Shapes
 import QtQuick.Layouts
 import QtQuick.Controls
-import FitnessDesigner 1.0
 
 Rectangle {
     id: nutritionPage
@@ -46,102 +45,20 @@ Rectangle {
 
     function getTodayDate() {
         var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-        var months = ["January", "February", "March", "April", "May", "June", 
+        var months = ["January", "February", "March", "April", "May", "June",
                       "July", "August", "September", "October", "November", "December"]
         var now = new Date()
         return days[now.getDay()] + ", " + months[now.getMonth()] + " " + now.getDate()
     }
 
     function formatShortDate(daysAgo) {
-        var months = ["January", "February", "March", "April", "May", "June", 
+        var months = ["January", "February", "March", "April", "May", "June",
                       "July", "August", "September", "October", "November", "December"]
         var date = new Date()
         date.setDate(date.getDate() - daysAgo)
         return months[date.getMonth()] + " " + date.getDate()
     }
 
-    function computeTodayTotal(nutrient) {
-        var today = new Date().toDateString()
-        var total = 0
-        for (var i = 0; i < savedMealsModel.count; i++) {
-            var meal = savedMealsModel.get(i)
-            if (new Date(meal.date).toDateString() === today) {
-                if (nutrient === "calories") total += meal.calories
-                else if (nutrient === "protein") total += meal.protein
-                else if (nutrient === "carbs") total += meal.carbs
-                else if (nutrient === "fats") total += meal.fats
-                else if (nutrient === "sugar") total += meal.sugar
-            }
-        }
-        return total
-    }
-
-    function computeDayTotal(daysAgo, nutrient) {
-        var targetDate = new Date()
-        targetDate.setDate(targetDate.getDate() - daysAgo)
-        var targetDateStr = targetDate.toDateString()
-        var total = 0
-        for (var i = 0; i < savedMealsModel.count; i++) {
-            var meal = savedMealsModel.get(i)
-            if (new Date(meal.date).toDateString() === targetDateStr) {
-                if (nutrient === "calories") total += meal.calories
-                else if (nutrient === "protein") total += meal.protein
-                else if (nutrient === "carbs") total += meal.carbs
-                else if (nutrient === "fats") total += meal.fats
-                else if (nutrient === "sugar") total += meal.sugar
-            }
-        }
-        return total
-    }
-
-    function clearForm() {
-        titleInput.text = ""
-        descriptionInput.text = ""
-        caloriesInput.text = ""
-        proteinInput.text = ""
-        sugarInput.text = ""
-        carbsInput.text = ""
-        fatsInput.text = ""
-    }
-
-    function addMeal() {
-        if (titleInput.text.trim() === "") return
-        
-        var now = new Date()
-        savedMealsModel.insert(0, {
-            "id": Date.now().toString(),
-            "title": titleInput.text.trim(),
-            "description": descriptionInput.text.trim(),
-            "calories": parseInt(caloriesInput.text) || 0,
-            "protein": parseInt(proteinInput.text) || 0,
-            "sugar": parseInt(sugarInput.text) || 0,
-            "carbs": parseInt(carbsInput.text) || 0,
-            "fats": parseInt(fatsInput.text) || 0,
-            "date": now.toISOString()
-        })
-        
-        // Update totals and emit signal
-        totalCalories = computeTodayTotal("calories")
-        totalProtein = computeTodayTotal("protein")
-        totalCarbs = computeTodayTotal("carbs")
-        totalFats = computeTodayTotal("fats")
-        totalSugar = computeTodayTotal("sugar")
-        nutritionUpdated(totalCalories, totalProtein, totalCarbs, totalFats, totalSugar)
-        
-        clearForm()
-        console.log("Meal added:", savedMealsModel.get(0).title)
-    }
-
-    function deleteMeal(index) {
-        savedMealsModel.remove(index)
-        // Update totals
-        totalCalories = computeTodayTotal("calories")
-        totalProtein = computeTodayTotal("protein")
-        totalCarbs = computeTodayTotal("carbs")
-        totalFats = computeTodayTotal("fats")
-        totalSugar = computeTodayTotal("sugar")
-        nutritionUpdated(totalCalories, totalProtein, totalCarbs, totalFats, totalSugar)
-    }
 
     // ==========================================
     // DATA MODEL - Saved Meals
@@ -246,8 +163,8 @@ Rectangle {
                                     Layout.fillWidth: true
                                     Layout.preferredHeight: 14
                                     text: dayCalories + " / " + nutritionPage.calorieGoal + " kcal"
-                                    color: dayCalories > nutritionPage.calorieGoal ? "#ff6b6b" : 
-                                           dayCalories >= nutritionPage.calorieGoal * 0.9 ? "#4CAF50" : "#ffaa00"
+                                    color: dayCalories > nutritionPage.calorieGoal ? "#ff6b6b" :
+                                                                                     dayCalories >= nutritionPage.calorieGoal * 0.9 ? "#4CAF50" : "#ffaa00"
                                     font.pixelSize: Math.max(9, Math.min(12, dayColumn.width / 12))
                                     font.family: "PoetsenOne"
                                     horizontalAlignment: Text.AlignHCenter
@@ -280,8 +197,8 @@ Rectangle {
                                                 anchors.bottom: parent.bottom
                                                 anchors.horizontalCenter: parent.horizontalCenter
                                                 width: parent.width
-                                                height: dayColumn.dayCarbs > 0 ? 
-                                                    Math.max(20, (dayColumn.dayCarbs / dayColumn.maxCarbs) * (parent.height - 5)) : 0
+                                                height: dayColumn.dayCarbs > 0 ?
+                                                            Math.max(20, (dayColumn.dayCarbs / dayColumn.maxCarbs) * (parent.height - 5)) : 0
                                                 color: "#ff9800"
                                                 radius: 3
                                                 
@@ -309,8 +226,8 @@ Rectangle {
                                                 anchors.bottom: parent.bottom
                                                 anchors.horizontalCenter: parent.horizontalCenter
                                                 width: parent.width
-                                                height: dayColumn.dayProtein > 0 ? 
-                                                    Math.max(20, (dayColumn.dayProtein / dayColumn.maxProtein) * (parent.height - 5)) : 0
+                                                height: dayColumn.dayProtein > 0 ?
+                                                            Math.max(20, (dayColumn.dayProtein / dayColumn.maxProtein) * (parent.height - 5)) : 0
                                                 color: "#00bcd4"
                                                 radius: 3
                                                 
@@ -338,8 +255,8 @@ Rectangle {
                                                 anchors.bottom: parent.bottom
                                                 anchors.horizontalCenter: parent.horizontalCenter
                                                 width: parent.width
-                                                height: dayColumn.dayFats > 0 ? 
-                                                    Math.max(20, (dayColumn.dayFats / dayColumn.maxFats) * (parent.height - 5)) : 0
+                                                height: dayColumn.dayFats > 0 ?
+                                                            Math.max(20, (dayColumn.dayFats / dayColumn.maxFats) * (parent.height - 5)) : 0
                                                 color: "#9c27b0"
                                                 radius: 3
                                                 
