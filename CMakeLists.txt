@@ -4,57 +4,51 @@ project(MyFitnessTracker LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Qt auto-tools
 set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Qml Quick QuickControls2)
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 
 qt_add_executable(MyFitnessTracker
+
+    # ── Entry point ──────────────────────────────────────────────────────────
     src/main.cpp
 
-    src/DataManager.cpp
-    src/Analytics.cpp
-    src/Log.cpp
-    src/LogManager.cpp
-    src/Nutrition.cpp
-    src/HealthMetric.cpp
-    src/Workouts/Workout.cpp
-    src/Workouts/CardioWorkout.cpp
-    src/Workouts/StrengthWorkout.cpp
-    src/Workouts/YogaWorkout.cpp
-    src/components/WorkoutCard/WorkoutCard.cpp
-    src/components/WorkoutDialog/WorkoutDialog.cpp
-    
-    include/DataManager.h
-    include/Log.h
-    include/LogManager.h
-    include/Nutrition.h
-    include/HealthMetric.h
-    include/Analytics.h
-    include/Workouts/Workout.h
-    include/Workouts/CardioWorkout.h
-    include/Workouts/StrengthWorkout.h
-    include/Workouts/YogaWorkout.h
-    src/components/WorkoutCard/WorkoutCard.h
-    src/components/WorkoutDialog/WorkoutDialog.h
-    
-    FitnessDesigner/FitnessDesigner.qrc
+    # ── Splash screen ────────────────────────────────────────────────────────
+    src/SplashScreen.cpp     include/SplashScreen.h
+
+    # ── UI layer ─────────────────────────────────────────────────────────────
+    src/MainWindow.cpp       include/MainWindow.h
+    src/WorkoutsTab.cpp      include/WorkoutsTab.h
+    src/NutritionTab.cpp     include/NutritionTab.h
+    src/HealthMetricsTab.cpp include/HealthMetricsTab.h
+    src/AnalyticsTab.cpp     include/AnalyticsTab.h
+
+    # ── Business logic ───────────────────────────────────────────────────────
+    # NOTE: Analytics.cpp is intentionally absent.
+    # Analytics is a template class — its method bodies live in Analytics.h
+    # and are compiled on demand wherever Analytics<T> is instantiated.
+    src/DataManager.cpp      include/DataManager.h
+    src/Log.cpp              include/Log.h
+    src/LogManager.cpp       include/LogManager.h
+    src/Nutrition.cpp        include/Nutrition.h
+    src/HealthMetric.cpp     include/HealthMetric.h
+                             include/Analytics.h
+
+    # ── Workout subtypes ─────────────────────────────────────────────────────
+    src/Workouts/Workout.cpp         include/Workouts/Workout.h
+    src/Workouts/CardioWorkout.cpp   include/Workouts/CardioWorkout.h
+    src/Workouts/StrengthWorkout.cpp include/Workouts/StrengthWorkout.h
+    src/Workouts/YogaWorkout.cpp     include/Workouts/YogaWorkout.h
 )
 
 target_include_directories(MyFitnessTracker PRIVATE
     include
     include/Workouts
-    src/components/WorkoutCard
-    src/components/WorkoutDialog
 )
 
 target_link_libraries(MyFitnessTracker PRIVATE
     Qt6::Core
     Qt6::Gui
     Qt6::Widgets
-    Qt6::Qml
-    Qt6::Quick
-    Qt6::QuickControls2
 )
