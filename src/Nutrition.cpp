@@ -49,7 +49,7 @@ void Nutrition::displayLog() const
              << ", caloriesConsumed=" << caloriesConsumed << ", impact=" << computeImpact() << "]";
 }
 
-// Getters for mealType and caloriesConsumed
+// Getters
 MealType Nutrition::getMealType() const
 {
     return mealType;
@@ -60,7 +60,32 @@ double Nutrition::getCaloriesConsumed() const
     return caloriesConsumed;
 }
 
-// Setters for mealType and caloriesConsumed
+double Nutrition::getProtein() const
+{
+	return protein;
+}
+
+double Nutrition::getCarbs() const
+{
+	return carbs;
+}
+
+double Nutrition::getFats() const
+{
+	return fats;
+}
+
+double Nutrition::getSugar() const
+{
+	return sugar;
+}
+
+const std::string& Nutrition::getTitle() const
+{
+	return title;
+}
+
+// Setters
 void Nutrition::setMealType(MealType mealType)
 {
     this->mealType = mealType;
@@ -73,7 +98,8 @@ void Nutrition::setCaloriesConsumed(double caloriesConsumed)
 
 ostream &operator<<(ostream &os, const Nutrition &nutrition)
 {
-    os << "Nutrition[mealType=" << toString(nutrition.mealType)
+    os << "Nutrition[title=" << nutrition.title
+       << ", mealType=" << toString(nutrition.mealType)
        << ", caloriesConsumed=" << nutrition.caloriesConsumed
        << ", impact=" << nutrition.computeImpact() << "]";
     return os;
