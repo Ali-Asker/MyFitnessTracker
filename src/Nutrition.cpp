@@ -30,10 +30,12 @@ Nutrition::Nutrition(const std::string &logID,
                      const std::string &description,
                      double duration,
                      MealType mealType,
-                     double caloriesConsumed)
+                     double caloriesConsumed,
+                     const std::string& title)
     : Log(logID, date, duration, description)
     , mealType(mealType)
     , caloriesConsumed(caloriesConsumed)
+    , title(title)
 {}
 
 // The computeImpact method for Nutrition calculates the impact of the nutrition log, which could be based on the calories consumed.
@@ -58,26 +60,6 @@ MealType Nutrition::getMealType() const
 double Nutrition::getCaloriesConsumed() const
 {
     return caloriesConsumed;
-}
-
-double Nutrition::getProtein() const
-{
-	return protein;
-}
-
-double Nutrition::getCarbs() const
-{
-	return carbs;
-}
-
-double Nutrition::getFats() const
-{
-	return fats;
-}
-
-double Nutrition::getSugar() const
-{
-	return sugar;
 }
 
 const std::string& Nutrition::getTitle() const

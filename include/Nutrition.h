@@ -28,10 +28,6 @@ public:
               double duration,
               MealType mealType,
               double caloriesConsumed,
-              double protein = 0.0,
-              double carbs = 0.0,
-              double fats = 0.0,
-              double sugar = 0.0,
               const std::string& title = "");
 
 	~Nutrition() override = default;
@@ -42,10 +38,6 @@ public:
 	// Getters
 	MealType getMealType() const;
 	double getCaloriesConsumed() const;
-	double getProtein() const;
-	double getCarbs() const;
-	double getFats() const;
-	double getSugar() const;
 	const std::string& getTitle() const;
 
 	// Setters
