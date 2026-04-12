@@ -4,19 +4,19 @@
 #include "NutritionTab.h"
 #include "Nutrition.h"
 
-#include <QVBoxLayout>
+#include <QComboBox>
+#include <QDateTimeEdit>
+#include <QDialog>
+#include <QDialogButtonBox>
+#include <QDoubleSpinBox>
+#include <QFormLayout>
+#include <QFrame>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QLabel>
-#include <QFrame>
-#include <QDialog>
-#include <QFormLayout>
-#include <QComboBox>
-#include <QDoubleSpinBox>
-#include <QDateTimeEdit>
-#include <QDialogButtonBox>
 #include <QMessageBox>
 #include <QUuid>
+#include <QVBoxLayout>
 
 static std::string newID()
 {
@@ -24,7 +24,8 @@ static std::string newID()
 }
 
 NutritionTab::NutritionTab(LogManager &lm, QWidget *parent)
-    : QWidget(parent), logManager(lm)
+    : QWidget(parent)
+    , logManager(lm)
 {
     setupUI();
 }
@@ -58,9 +59,7 @@ void NutritionTab::setupUI()
 
     // ── Table ─────────────────────────────────────────────────────────────────
     table = new QTableWidget(0, 5, this);
-    table->setHorizontalHeaderLabels({
-        "ID", "Date", "Description", "Meal Type", "Calories"
-    });
+    table->setHorizontalHeaderLabels({"ID", "Date", "Description", "Meal Type", "Calories"});
     table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     table->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -96,11 +95,13 @@ void NutritionTab::refresh()
     for (const auto &log : logManager.getLogs()) {
         // Only show Nutrition-derived logs (skip Workout entries)
         Nutrition *n = dynamic_cast<Nutrition *>(log.get());
-        if (!n) continue;
+        if (!n)
+            continue;
 
         if (!keyword.isEmpty()) {
             QString desc = QString::fromStdString(n->getDescription());
-            if (!desc.contains(keyword, Qt::CaseInsensitive)) continue;
+            if (!desc.contains(keyword, Qt::CaseInsensitive))
+                continue;
         }
 
         int row = table->rowCount();
@@ -115,10 +116,18 @@ void NutritionTab::refresh()
         // Convert the MealType enum to a readable string
         QString mealStr;
         switch (n->getMealType()) {
-            case MealType::Breakfast: mealStr = "Breakfast"; break;
-            case MealType::Lunch:     mealStr = "Lunch";     break;
-            case MealType::Dinner:    mealStr = "Dinner";    break;
-            case MealType::Snack:     mealStr = "Snack";     break;
+        case MealType::Breakfast:
+            mealStr = "Breakfast";
+            break;
+        case MealType::Lunch:
+            mealStr = "Lunch";
+            break;
+        case MealType::Dinner:
+            mealStr = "Dinner";
+            break;
+        case MealType::Snack:
+            mealStr = "Snack";
+            break;
         }
 
         cell(0, QString::fromStdString(n->getLogID()));
@@ -153,36 +162,37 @@ void NutritionTab::onAdd()
     form->setSpacing(10);
     form->setContentsMargins(20, 20, 20, 20);
 
-    auto *descEdit  = new QLineEdit;
+    auto *descEdit = new QLineEdit;
     descEdit->setPlaceholderText("e.g. Oatmeal with fruit");
 
-    auto *dateEdit  = new QDateTimeEdit(QDateTime::currentDateTime());
+    auto *dateEdit = new QDateTimeEdit(QDateTime::currentDateTime());
     dateEdit->setDisplayFormat("yyyy-MM-dd HH:mm");
 
     auto *mealCombo = new QComboBox;
     mealCombo->addItems({"Breakfast", "Lunch", "Dinner", "Snack"});
 
-    auto *calSpin   = new QDoubleSpinBox;
+    auto *calSpin = new QDoubleSpinBox;
     calSpin->setRange(0, 10000);
     calSpin->setSuffix(" kcal");
 
-    auto *durSpin   = new QDoubleSpinBox;
+    auto *durSpin = new QDoubleSpinBox;
     durSpin->setRange(0, 120);
     durSpin->setSuffix(" min");
     durSpin->setToolTip("Duration of the meal sitting (optional)");
 
-    form->addRow("Description",       descEdit);
-    form->addRow("Date / Time",       dateEdit);
-    form->addRow("Meal Type",         mealCombo);
+    form->addRow("Description", descEdit);
+    form->addRow("Date / Time", dateEdit);
+    form->addRow("Meal Type", mealCombo);
     form->addRow("Calories Consumed", calSpin);
-    form->addRow("Duration",          durSpin);
+    form->addRow("Duration", durSpin);
 
     auto *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
     connect(buttons, &QDialogButtonBox::accepted, &dlg, &QDialog::accept);
     connect(buttons, &QDialogButtonBox::rejected, &dlg, &QDialog::reject);
     form->addRow(buttons);
 
-    if (dlg.exec() != QDialog::Accepted) return;
+    if (dlg.exec() != QDialog::Accepted)
+        return;
 
     if (descEdit->text().trimmed().isEmpty()) {
         QMessageBox::warning(this, "Validation", "Description cannot be empty.");
@@ -192,20 +202,27 @@ void NutritionTab::onAdd()
     // Map combo index back to the MealType enum
     MealType mt;
     switch (mealCombo->currentIndex()) {
-        case 0:  mt = MealType::Breakfast; break;
-        case 1:  mt = MealType::Lunch;     break;
-        case 2:  mt = MealType::Dinner;    break;
-        default: mt = MealType::Snack;     break;
+    case 0:
+        mt = MealType::Breakfast;
+        break;
+    case 1:
+        mt = MealType::Lunch;
+        break;
+    case 2:
+        mt = MealType::Dinner;
+        break;
+    default:
+        mt = MealType::Snack;
+        break;
     }
 
     try {
-        logManager.addLog(std::make_unique<Nutrition>(
-            newID(),
-            dateEdit->dateTime(),
-            descEdit->text().trimmed().toStdString(),
-            durSpin->value(),
-            mt,
-            calSpin->value()));
+        logManager.addLog(std::make_unique<Nutrition>(newID(),
+                                                      dateEdit->dateTime(),
+                                                      descEdit->text().trimmed().toStdString(),
+                                                      durSpin->value(),
+                                                      mt,
+                                                      calSpin->value()));
         refresh();
     } catch (const std::exception &e) {
         QMessageBox::critical(this, "Error", e.what());

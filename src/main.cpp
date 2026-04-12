@@ -7,8 +7,8 @@
 //   3. Hand off to the Qt event loop
 
 #include <QApplication>
-#include "SplashScreen.h"
 #include "MainWindow.h"
+#include "SplashScreen.h"
 
 int main(int argc, char *argv[])
 {
@@ -25,10 +25,15 @@ int main(int argc, char *argv[])
     // ── When the splash finishes, open the main window ────────────────────────
     // Qt::QueuedConnection ensures the splash's timer has fully stopped before
     // we do the window switch (avoids a brief flicker on some platforms).
-    QObject::connect(&splash, &SplashScreen::ready, window, [&splash, window]() {
-        window->show();   // bring up the main app
-        splash.close();   // dismiss the splash
-    }, Qt::QueuedConnection);
+    QObject::connect(
+        &splash,
+        &SplashScreen::ready,
+        window,
+        [&splash, window]() {
+            window->show(); // bring up the main app
+            splash.close(); // dismiss the splash
+        },
+        Qt::QueuedConnection);
 
     return app.exec();
 }

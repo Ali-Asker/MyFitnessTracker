@@ -4,17 +4,18 @@
 
 #include "AnalyticsTab.h"
 
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QGridLayout>
 #include <QFrame>
+#include <QGridLayout>
+#include <QHBoxLayout>
 #include <QLabel>
-#include <QPushButton>
 #include <QMessageBox>
+#include <QPushButton>
+#include <QVBoxLayout>
 #include <algorithm>
 
 AnalyticsTab::AnalyticsTab(LogManager &lm, QWidget *parent)
-    : QWidget(parent), logManager(lm)
+    : QWidget(parent)
+    , logManager(lm)
 {
     setupUI();
 }
@@ -52,8 +53,8 @@ QLabel *AnalyticsTab::makeCard(const QString &caption, QWidget *parent, QLayout 
     if (auto *grid = qobject_cast<QGridLayout *>(layout)) {
         // Count existing items to figure out the next row/col position
         int count = grid->count();
-        int col   = count % 2;
-        int row   = count / 2;
+        int col = count % 2;
+        int row = count / 2;
         grid->addWidget(card, row, col);
     } else {
         layout->addWidget(card);
@@ -84,9 +85,9 @@ void AnalyticsTab::setupUI()
     grid->setSpacing(12);
 
     totalTimeVal = makeCard("Total Workout Time (min)", this, grid);
-    burnedVal    = makeCard("Calories Burned",           this, grid);
-    consumedVal  = makeCard("Calories Consumed",         this, grid);
-    netVal       = makeCard("Net Calories",              this, grid);
+    burnedVal = makeCard("Calories Burned", this, grid);
+    consumedVal = makeCard("Calories Consumed", this, grid);
+    netVal = makeCard("Net Calories", this, grid);
 
     root->addLayout(grid);
 
@@ -162,20 +163,18 @@ void AnalyticsTab::refresh()
         ptrs.push_back(l.get());
 
     double totalTime = analytics.computeTotalWorkoutTime(ptrs);
-    double burned    = analytics.computeTotalCaloriesBurned(ptrs);
-    double consumed  = analytics.computeTotalCaloriesConsumed(ptrs);
-    double net       = analytics.computeNetCalories(consumed, burned);
+    double burned = analytics.computeTotalCaloriesBurned(ptrs);
+    double consumed = analytics.computeTotalCaloriesConsumed(ptrs);
+    double net = analytics.computeNetCalories(consumed, burned);
 
     totalTimeVal->setText(QString::number(totalTime, 'f', 0));
-    burnedVal->setText(QString::number(burned,   'f', 0));
+    burnedVal->setText(QString::number(burned, 'f', 0));
     consumedVal->setText(QString::number(consumed, 'f', 0));
     netVal->setText(QString::number(net, 'f', 0));
 
     // Net calories: green = deficit (good), orange = surplus
-    netVal->setStyleSheet(
-        net <= 0
-            ? "color:#39FF14; font-size:30px; font-weight:700;"
-            : "color:#e67e22; font-size:30px; font-weight:700;");
+    netVal->setStyleSheet(net <= 0 ? "color:#39FF14; font-size:30px; font-weight:700;"
+                                   : "color:#e67e22; font-size:30px; font-weight:700;");
 }
 
 // ── onCalcGoal ────────────────────────────────────────────────────────────────

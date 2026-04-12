@@ -4,19 +4,19 @@
 #include "HealthMetricsTab.h"
 #include "HealthMetric.h"
 
-#include <QVBoxLayout>
+#include <QDateTimeEdit>
+#include <QDialog>
+#include <QDialogButtonBox>
+#include <QDoubleSpinBox>
+#include <QFormLayout>
+#include <QFrame>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QLabel>
-#include <QFrame>
-#include <QDialog>
-#include <QFormLayout>
 #include <QLineEdit>
-#include <QDoubleSpinBox>
-#include <QDateTimeEdit>
-#include <QDialogButtonBox>
 #include <QMessageBox>
 #include <QUuid>
+#include <QVBoxLayout>
 
 static std::string newID()
 {
@@ -24,7 +24,8 @@ static std::string newID()
 }
 
 HealthMetricsTab::HealthMetricsTab(LogManager &lm, QWidget *parent)
-    : QWidget(parent), logManager(lm)
+    : QWidget(parent)
+    , logManager(lm)
 {
     setupUI();
 }
@@ -123,7 +124,7 @@ void HealthMetricsTab::onAdd()
     auto *nameEdit = new QLineEdit;
     nameEdit->setPlaceholderText("e.g. Weight, Heart Rate, Body Fat");
 
-    auto *valSpin  = new QDoubleSpinBox;
+    auto *valSpin = new QDoubleSpinBox;
     valSpin->setRange(0.01, 99999);
     valSpin->setDecimals(2);
 
@@ -131,15 +132,16 @@ void HealthMetricsTab::onAdd()
     dateEdit->setDisplayFormat("yyyy-MM-dd HH:mm");
 
     form->addRow("Metric Name", nameEdit);
-    form->addRow("Value",       valSpin);
-    form->addRow("Date",        dateEdit);
+    form->addRow("Value", valSpin);
+    form->addRow("Date", dateEdit);
 
     auto *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
     connect(buttons, &QDialogButtonBox::accepted, &dlg, &QDialog::accept);
     connect(buttons, &QDialogButtonBox::rejected, &dlg, &QDialog::reject);
     form->addRow(buttons);
 
-    if (dlg.exec() != QDialog::Accepted) return;
+    if (dlg.exec() != QDialog::Accepted)
+        return;
 
     // Validate: name must not be empty and value must be positive
     if (nameEdit->text().trimmed().isEmpty()) {
@@ -151,11 +153,10 @@ void HealthMetricsTab::onAdd()
         return;
     }
 
-    logManager.addMetric(std::make_unique<HealthMetric>(
-        newID(),
-        nameEdit->text().trimmed().toStdString(),
-        dateEdit->dateTime(),
-        valSpin->value()));
+    logManager.addMetric(std::make_unique<HealthMetric>(newID(),
+                                                        nameEdit->text().trimmed().toStdString(),
+                                                        dateEdit->dateTime(),
+                                                        valSpin->value()));
 
     refresh();
 }

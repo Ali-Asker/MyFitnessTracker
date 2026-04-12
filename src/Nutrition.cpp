@@ -30,7 +30,12 @@ Nutrition::Nutrition(const std::string &logID,
                      const std::string &description,
                      double duration,
                      MealType mealType,
+<<<<<<< Updated upstream
                      double caloriesConsumed)
+=======
+                     double caloriesConsumed,
+                     const std::string &title)
+>>>>>>> Stashed changes
     : Log(logID, date, duration, description)
     , mealType(mealType)
     , caloriesConsumed(caloriesConsumed)
@@ -60,6 +65,7 @@ double Nutrition::getCaloriesConsumed() const
     return caloriesConsumed;
 }
 
+<<<<<<< Updated upstream
 double Nutrition::getProtein() const
 {
 	return protein;
@@ -81,8 +87,11 @@ double Nutrition::getSugar() const
 }
 
 const std::string& Nutrition::getTitle() const
+=======
+const std::string &Nutrition::getTitle() const
+>>>>>>> Stashed changes
 {
-	return title;
+    return title;
 }
 
 // Setters
@@ -98,8 +107,7 @@ void Nutrition::setCaloriesConsumed(double caloriesConsumed)
 
 ostream &operator<<(ostream &os, const Nutrition &nutrition)
 {
-    os << "Nutrition[title=" << nutrition.title
-       << ", mealType=" << toString(nutrition.mealType)
+    os << "Nutrition[title=" << nutrition.title << ", mealType=" << toString(nutrition.mealType)
        << ", caloriesConsumed=" << nutrition.caloriesConsumed
        << ", impact=" << nutrition.computeImpact() << "]";
     return os;

@@ -3,20 +3,21 @@
 // builds the File menu, and handles auto-load on startup.
 
 #include "MainWindow.h"
-#include "WorkoutsTab.h"
-#include "NutritionTab.h"
-#include "HealthMetricsTab.h"
 #include "AnalyticsTab.h"
+#include "HealthMetricsTab.h"
+#include "NutritionTab.h"
+#include "WorkoutsTab.h"
 
 #include <QApplication>
-#include <QMenuBar>
-#include <QStatusBar>
-#include <QMessageBox>
-#include <QFileDialog>
 #include <QDir>
+#include <QFileDialog>
+#include <QMenuBar>
+#include <QMessageBox>
 #include <QStandardPaths>
+#include <QStatusBar>
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent)
 {
     setWindowTitle("MyFitnessTracker");
     setMinimumSize(900, 600);
@@ -28,15 +29,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     // ── Build each tab, passing a reference to the shared LogManager ─────────
     // All tabs read/write the same LogManager so data stays in sync.
-    tabs         = new QTabWidget(this);
-    workoutsTab  = new WorkoutsTab(logManager, tabs);
+    tabs = new QTabWidget(this);
+    workoutsTab = new WorkoutsTab(logManager, tabs);
     nutritionTab = new NutritionTab(logManager, tabs);
-    metricsTab   = new HealthMetricsTab(logManager, tabs);
+    metricsTab = new HealthMetricsTab(logManager, tabs);
     analyticsTab = new AnalyticsTab(logManager, tabs);
 
-    tabs->addTab(workoutsTab,  "Workouts");
+    tabs->addTab(workoutsTab, "Workouts");
     tabs->addTab(nutritionTab, "Nutrition");
-    tabs->addTab(metricsTab,   "Health Metrics");
+    tabs->addTab(metricsTab, "Health Metrics");
     tabs->addTab(analyticsTab, "Analytics");
 
     setCentralWidget(tabs);
@@ -77,16 +78,17 @@ void MainWindow::onSave()
 {
     // Open the native Save dialog, starting in the user's Documents folder.
     // getSaveFileName returns an empty string if the user cancels — we bail out.
-    QString path = QFileDialog::getSaveFileName(
-        this,
-        "Save Fitness Data",                              // dialog title
-        QStandardPaths::writableLocation(                  // default directory
-            QStandardPaths::DocumentsLocation) + "/fitness_logs.json",
-        "JSON Files (*.json);;All Files (*)"              // file type filter
+    QString path
+        = QFileDialog::getSaveFileName(this,
+                                       "Save Fitness Data",              // dialog title
+                                       QStandardPaths::writableLocation( // default directory
+                                           QStandardPaths::DocumentsLocation)
+                                           + "/fitness_logs.json",
+                                       "JSON Files (*.json);;All Files (*)" // file type filter
         );
 
     if (path.isEmpty())
-        return;  // user cancelled — do nothing
+        return; // user cancelled — do nothing
 
     try {
         dataManager.saveData(path.toStdString(), logManager);
@@ -100,16 +102,16 @@ void MainWindow::onLoad()
 {
     // Open the native Open dialog, starting in the user's Documents folder.
     // getOpenFileName returns an empty string if the user cancels.
-    QString path = QFileDialog::getOpenFileName(
-        this,
-        "Load Fitness Data",                              // dialog title
-        QStandardPaths::writableLocation(                  // default directory
-            QStandardPaths::DocumentsLocation),
-        "JSON Files (*.json);;All Files (*)"              // file type filter
+    QString path
+        = QFileDialog::getOpenFileName(this,
+                                       "Load Fitness Data",              // dialog title
+                                       QStandardPaths::writableLocation( // default directory
+                                           QStandardPaths::DocumentsLocation),
+                                       "JSON Files (*.json);;All Files (*)" // file type filter
         );
 
     if (path.isEmpty())
-        return;  // user cancelled — do nothing
+        return; // user cancelled — do nothing
 
     try {
         dataManager.loadData(path.toStdString(), logManager);

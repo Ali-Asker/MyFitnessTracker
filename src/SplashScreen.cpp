@@ -7,21 +7,22 @@
 
 #include "SplashScreen.h"
 
+#include <QFont>
+#include <QGuiApplication>
+#include <QLinearGradient>
+#include <QPaintEvent>
 #include <QPainter>
 #include <QPainterPath>
 #include <QScreen>
-#include <QGuiApplication>
-#include <QLinearGradient>
-#include <QFont>
-#include <QPaintEvent>
 
 // Total duration of the splash in milliseconds.
 // With a 30ms tick and 100 steps: 30 * 100 = 3000ms = 3 seconds.
-static constexpr int TICK_MS    = 30;
+static constexpr int TICK_MS = 30;
 static constexpr int TOTAL_STEPS = 100;
 
 SplashScreen::SplashScreen(QWidget *parent)
-    : QWidget(parent), progress(0)
+    : QWidget(parent)
+    , progress(0)
 {
     // ── Window flags ─────────────────────────────────────────────────────────
     // Frameless: no title bar, no borders — just our painted surface
@@ -66,21 +67,21 @@ void SplashScreen::paintEvent(QPaintEvent *)
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing);
 
-    const QRect  r      = rect();
-    const int    w      = r.width();
-    const int    h      = r.height();
-    const QColor bg     = QColor("#1a1a1a");
-    const QColor accent = QColor("#39FF14");   // neon green — matches the app theme
-    const QColor dim    = QColor("#444444");
-    const QColor white  = QColor("#e8e8e8");
-    const QColor grey   = QColor("#777777");
+    const QRect r = rect();
+    const int w = r.width();
+    const int h = r.height();
+    const QColor bg = QColor("#1a1a1a");
+    const QColor accent = QColor("#39FF14"); // neon green — matches the app theme
+    const QColor dim = QColor("#444444");
+    const QColor white = QColor("#e8e8e8");
+    const QColor grey = QColor("#777777");
 
     // ── Background ────────────────────────────────────────────────────────────
     p.fillRect(r, bg);
 
     // Subtle green glow in the top-left corner for depth
     QRadialGradient glow(80, 80, 180);
-    glow.setColorAt(0, QColor(57, 255, 20, 30));   // very faint green
+    glow.setColorAt(0, QColor(57, 255, 20, 30)); // very faint green
     glow.setColorAt(1, Qt::transparent);
     p.fillRect(r, glow);
 
@@ -109,10 +110,10 @@ void SplashScreen::paintEvent(QPaintEvent *)
         pulse.moveTo(-22, 4);
         pulse.lineTo(-10, 4);
         pulse.lineTo(-5, -14);
-        pulse.lineTo( 0,  18);
-        pulse.lineTo( 5, -6);
-        pulse.lineTo(10,  4);
-        pulse.lineTo(22,  4);
+        pulse.lineTo(0, 18);
+        pulse.lineTo(5, -6);
+        pulse.lineTo(10, 4);
+        pulse.lineTo(22, 4);
         p.drawPath(pulse);
 
         p.restore();
@@ -130,14 +131,13 @@ void SplashScreen::paintEvent(QPaintEvent *)
     p.setFont(tagFont);
     p.setPen(grey);
     QRect tagRect(0, 166, w, 22);
-    p.drawText(tagRect, Qt::AlignHCenter | Qt::AlignVCenter,
-               "Track. Analyse. Improve.");
+    p.drawText(tagRect, Qt::AlignHCenter | Qt::AlignVCenter, "Track. Analyse. Improve.");
 
     // ── Progress bar track (background) ──────────────────────────────────────
-    const int barH    = 3;       // very thin bar — clean and modern
-    const int barPad  = 48;      // horizontal padding on each side
-    const int barY    = h - 44;
-    const int barW    = w - barPad * 2;
+    const int barH = 3;    // very thin bar — clean and modern
+    const int barPad = 48; // horizontal padding on each side
+    const int barY = h - 44;
+    const int barW = w - barPad * 2;
 
     p.setPen(Qt::NoPen);
     p.setBrush(dim);
@@ -157,10 +157,14 @@ void SplashScreen::paintEvent(QPaintEvent *)
     // ── Status text below the bar ─────────────────────────────────────────────
     // Changes message as loading progresses so it feels alive
     QString status;
-    if      (progress < 30)  status = "Initialising...";
-    else if (progress < 60)  status = "Loading components...";
-    else if (progress < 90)  status = "Almost ready...";
-    else                     status = "Welcome!";
+    if (progress < 30)
+        status = "Initialising...";
+    else if (progress < 60)
+        status = "Loading components...";
+    else if (progress < 90)
+        status = "Almost ready...";
+    else
+        status = "Welcome!";
 
     QFont statusFont("Segoe UI", 8);
     p.setFont(statusFont);
