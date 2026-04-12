@@ -35,5 +35,5 @@ private slots:
 
 private:
     QTimer *timer;
-    int     progress; // 0 → 100
+    int     progress;
 };

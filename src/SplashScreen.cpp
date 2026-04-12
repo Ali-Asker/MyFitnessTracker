@@ -24,7 +24,6 @@ SplashScreen::SplashScreen(QWidget *parent)
     : QWidget(parent)
     , progress(0)
 {
-    // ── Window flags ─────────────────────────────────────────────────────────
     // Frameless: no title bar, no borders — just our painted surface
     // Tool: keeps it off the taskbar
     // StayOnTop: stays above other windows while loading
@@ -41,14 +40,12 @@ SplashScreen::SplashScreen(QWidget *parent)
         move(sg.center() - rect().center());
     }
 
-    // ── Timer ─────────────────────────────────────────────────────────────────
     // Each tick advances progress by 1 and triggers a repaint
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &SplashScreen::onTick);
     timer->start(TICK_MS);
 }
 
-// ── onTick ────────────────────────────────────────────────────────────────────
 void SplashScreen::onTick()
 {
     progress++;
@@ -60,7 +57,6 @@ void SplashScreen::onTick()
     }
 }
 
-// ── paintEvent ────────────────────────────────────────────────────────────────
 // Everything visible is drawn here: background, logo mark, text, bar.
 void SplashScreen::paintEvent(QPaintEvent *)
 {
@@ -76,7 +72,6 @@ void SplashScreen::paintEvent(QPaintEvent *)
     const QColor white = QColor("#e8e8e8");
     const QColor grey = QColor("#777777");
 
-    // ── Background ────────────────────────────────────────────────────────────
     p.fillRect(r, bg);
 
     // Subtle green glow in the top-left corner for depth
@@ -85,11 +80,9 @@ void SplashScreen::paintEvent(QPaintEvent *)
     glow.setColorAt(1, Qt::transparent);
     p.fillRect(r, glow);
 
-    // ── Thin border ───────────────────────────────────────────────────────────
     p.setPen(QPen(QColor("#2e2e2e"), 1));
     p.drawRect(r.adjusted(0, 0, -1, -1));
 
-    // ── Logo mark: a simple hexagon with a lightning bolt feel ───────────────
     // Drawn as a rounded square rotated 45° with the accent colour
     {
         p.save();
@@ -119,21 +112,18 @@ void SplashScreen::paintEvent(QPaintEvent *)
         p.restore();
     }
 
-    // ── App name ──────────────────────────────────────────────────────────────
     QFont titleFont("Segoe UI", 26, QFont::Bold);
     p.setFont(titleFont);
     p.setPen(white);
     QRect titleRect(0, 128, w, 36);
     p.drawText(titleRect, Qt::AlignHCenter | Qt::AlignVCenter, "MyFitnessTracker");
 
-    // ── Tagline ───────────────────────────────────────────────────────────────
     QFont tagFont("Segoe UI", 10, QFont::Normal);
     p.setFont(tagFont);
     p.setPen(grey);
     QRect tagRect(0, 166, w, 22);
     p.drawText(tagRect, Qt::AlignHCenter | Qt::AlignVCenter, "Track. Analyse. Improve.");
 
-    // ── Progress bar track (background) ──────────────────────────────────────
     const int barH = 3;    // very thin bar — clean and modern
     const int barPad = 48; // horizontal padding on each side
     const int barY = h - 44;
@@ -143,7 +133,6 @@ void SplashScreen::paintEvent(QPaintEvent *)
     p.setBrush(dim);
     p.drawRoundedRect(barPad, barY, barW, barH, 2, 2);
 
-    // ── Progress bar fill ─────────────────────────────────────────────────────
     int filled = static_cast<int>(barW * progress / 100.0);
     if (filled > 0) {
         // Gradient from a slightly darker green to the full neon accent
@@ -154,7 +143,6 @@ void SplashScreen::paintEvent(QPaintEvent *)
         p.drawRoundedRect(barPad, barY, filled, barH, 2, 2);
     }
 
-    // ── Status text below the bar ─────────────────────────────────────────────
     // Changes message as loading progresses so it feels alive
     QString status;
     if (progress < 30)
@@ -172,7 +160,6 @@ void SplashScreen::paintEvent(QPaintEvent *)
     QRect statusRect(0, barY + 10, w, 20);
     p.drawText(statusRect, Qt::AlignHCenter | Qt::AlignVCenter, status);
 
-    // ── Version label (bottom-right corner) ──────────────────────────────────
     QFont versionFont("Segoe UI", 7);
     p.setFont(versionFont);
     p.setPen(QColor("#444"));

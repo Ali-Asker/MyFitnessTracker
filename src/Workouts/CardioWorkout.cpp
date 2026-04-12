@@ -1,4 +1,3 @@
-// file author: Shane
 #include "CardioWorkout.h"
 #include <QDebug>
 #include <string>

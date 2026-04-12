@@ -1,4 +1,3 @@
-// file author: Shane
 #include "YogaWorkout.h"
 #include <QDebug>
 #include <string>

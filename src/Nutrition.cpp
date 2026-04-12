@@ -1,4 +1,3 @@
-// File author: Josh / Phinees
 #include "Nutrition.h"
 #include <QDateTime>
 #include <QDebug>
@@ -7,7 +6,6 @@ using namespace std;
 
 namespace {
 // Helper method to convert enum to string
-// Author: Josh
 const char *toString(MealType type)
 {
     switch (type) {
@@ -67,8 +65,7 @@ void Nutrition::displayLog() const
     << ", impact=" << computeImpact() << "]";
 }
 
-// ── Getters ───────────────────────────────────────────────────────────────────
-
+// Getters 
 MealType Nutrition::getMealType() const       { return mealType; }
 double   Nutrition::getCaloriesConsumed() const { return caloriesConsumed; }
 double   Nutrition::getProtein() const        { return protein; }
@@ -78,8 +75,7 @@ double   Nutrition::getSugar() const          { return sugar; }
 
 const std::string &Nutrition::getTitle() const { return title; }
 
-// ── Setters ───────────────────────────────────────────────────────────────────
-
+// Setters
 void Nutrition::setMealType(MealType mealType)
 {
     this->mealType = mealType;
@@ -96,8 +92,6 @@ void Nutrition::setFats(double fats)       { this->fats    = fats;    }
 void Nutrition::setSugar(double sugar)     { this->sugar   = sugar;   }
 
 void Nutrition::setTitle(const std::string &title) { this->title = title; }
-
-// ── Operators ─────────────────────────────────────────────────────────────────
 
 // Two Nutrition objects are equal if every attribute matches.
 bool Nutrition::operator==(const Nutrition &other) const

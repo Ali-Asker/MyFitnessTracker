@@ -20,7 +20,6 @@ AnalyticsTab::AnalyticsTab(LogManager &lm, QWidget *parent)
     setupUI();
 }
 
-// ── makeCard ──────────────────────────────────────────────────────────────────
 // Builds a dark rounded card with:
 //   - a large green number (the stat value)
 //   - a small grey caption below it
@@ -69,7 +68,6 @@ void AnalyticsTab::setupUI()
     root->setContentsMargins(20, 20, 20, 16);
     root->setSpacing(16);
 
-    // ── Heading ───────────────────────────────────────────────────────────────
     auto *heading = new QLabel("ANALYTICS");
     heading->setObjectName("heading");
     root->addWidget(heading);
@@ -79,7 +77,6 @@ void AnalyticsTab::setupUI()
     sep->setStyleSheet("color:#333;");
     root->addWidget(sep);
 
-    // ── 2x2 grid of stat cards ────────────────────────────────────────────────
     // Each card shows one aggregate number from the Analytics class
     auto *grid = new QGridLayout;
     grid->setSpacing(12);
@@ -90,14 +87,11 @@ void AnalyticsTab::setupUI()
     netVal = makeCard("Net Calories", this, grid);
 
     root->addLayout(grid);
-
-    // ── Separator ─────────────────────────────────────────────────────────────
     auto *sep2 = new QFrame;
     sep2->setFrameShape(QFrame::HLine);
     sep2->setStyleSheet("color:#333;");
     root->addWidget(sep2);
 
-    // ── Goal progress section ─────────────────────────────────────────────────
     auto *goalLabel = new QLabel("GOAL PROGRESS");
     goalLabel->setObjectName("heading");
     root->addWidget(goalLabel);
@@ -143,7 +137,6 @@ void AnalyticsTab::setupUI()
 
     root->addStretch();
 
-    // ── Refresh button ────────────────────────────────────────────────────────
     auto *btnRow = new QHBoxLayout;
     btnRow->addStretch();
     auto *refreshBtn = new QPushButton("Refresh Stats");
@@ -152,7 +145,6 @@ void AnalyticsTab::setupUI()
     root->addLayout(btnRow);
 }
 
-// ── refresh ───────────────────────────────────────────────────────────────────
 // Collects all logs from LogManager as raw pointers, then calls the
 // Analytics template methods to compute each aggregate value.
 void AnalyticsTab::refresh()
@@ -176,8 +168,6 @@ void AnalyticsTab::refresh()
     netVal->setStyleSheet(net <= 0 ? "color:#39FF14; font-size:30px; font-weight:700;"
                                    : "color:#e67e22; font-size:30px; font-weight:700;");
 }
-
-// ── onCalcGoal ────────────────────────────────────────────────────────────────
 // Calls Analytics::computeGoalProgress and updates the progress bar.
 void AnalyticsTab::onCalcGoal()
 {

@@ -1,4 +1,3 @@
-// file author: Shane
 #include "StrengthWorkout.h"
 #include <QDebug>
 #include <string>

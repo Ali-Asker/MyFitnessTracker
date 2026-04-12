@@ -22,7 +22,6 @@ class HealthMetricsTab : public QWidget
 
 public:
     explicit HealthMetricsTab(LogManager &logManager, QWidget *parent = nullptr);
-
     // Repopulates the table from the current LogManager state.
     void refresh();
 
@@ -33,19 +32,14 @@ private slots:
 
 private:
     void setupUI();
-
-    // ── Data ──────────────────────────────────────────────────────────────────
     LogManager &logManager;
-
-    // ── Widgets ───────────────────────────────────────────────────────────────
     QTableWidget *table         = nullptr;
 
     // Search / filter bar
-    QLineEdit    *searchBar     = nullptr;   // live metric name / value search
+    QLineEdit    *searchBar     = nullptr;   
     QDateEdit    *fromDate      = nullptr;
     QDateEdit    *toDate        = nullptr;
     QCheckBox    *useDateFilter = nullptr;
-
     // Action buttons
     QPushButton  *addBtn    = nullptr;
     QPushButton  *editBtn   = nullptr;

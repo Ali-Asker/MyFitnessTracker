@@ -24,28 +24,22 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
 
 private slots:
-    void onSave();   // File > Save
-    void onLoad();   // File > Load
-    void onExportSummary();   // ← ADD THIS LINE
+    void onSave();   
+    void onLoad();   
+    void onExportSummary(); 
 
 
 private:
-    // ── Helpers ──────────────────────────────────────────────────────────────
     void buildMenuBar();  // Creates the File menu
     void applyTheme();    // Sets the global dark stylesheet
-
-    // ── Widgets ──────────────────────────────────────────────────────────────
     QTabWidget       *tabs;
     WorkoutsTab      *workoutsTab;
     NutritionTab     *nutritionTab;
     HealthMetricsTab *metricsTab;
     AnalyticsTab     *analyticsTab;
 
-    // ── Data layer ───────────────────────────────────────────────────────────
     // LogManager holds all logs and health metrics in memory.
     // DataManager reads/writes them to a JSON file.
     LogManager  logManager;
     DataManager dataManager;
-
-
 };

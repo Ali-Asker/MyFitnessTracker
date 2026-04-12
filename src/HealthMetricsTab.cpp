@@ -32,21 +32,19 @@ static std::string newID()
     return QUuid::createUuid().toString(QUuid::WithoutBraces).left(6).toStdString();
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
 HealthMetricsTab::HealthMetricsTab(LogManager &lm, QWidget *parent)
     : QWidget(parent), logManager(lm)
 {
     setupUI();
 }
 
-// ── setupUI ───────────────────────────────────────────────────────────────────
 void HealthMetricsTab::setupUI()
 {
     auto *root = new QVBoxLayout(this);
     root->setContentsMargins(20, 20, 20, 16);
     root->setSpacing(10);
 
-    // ── Row 1: Heading + name search ──────────────────────────────────────────
+    // Row 1: Heading + name search 
     auto *topRow = new QHBoxLayout;
 
     auto *heading = new QLabel("HEALTH METRICS");
@@ -59,16 +57,13 @@ void HealthMetricsTab::setupUI()
     searchBar->setFixedWidth(220);
     connect(searchBar, &QLineEdit::textChanged, this, &HealthMetricsTab::refresh);
     topRow->addWidget(searchBar);
-
     root->addLayout(topRow);
 
-    // ── Separator ─────────────────────────────────────────────────────────────
     auto *sep1 = new QFrame;
     sep1->setFrameShape(QFrame::HLine);
     sep1->setStyleSheet("color:#333;");
     root->addWidget(sep1);
 
-    // ── Row 2: Date-range filter bar ──────────────────────────────────────────
     auto *filterRow = new QHBoxLayout;
     filterRow->setSpacing(8);
 
@@ -137,13 +132,11 @@ void HealthMetricsTab::setupUI()
     filterRow->addStretch();
     root->addLayout(filterRow);
 
-    // ── Separator ─────────────────────────────────────────────────────────────
     auto *sep2 = new QFrame;
     sep2->setFrameShape(QFrame::HLine);
     sep2->setStyleSheet("color:#333;");
     root->addWidget(sep2);
 
-    // ── Table ─────────────────────────────────────────────────────────────────
     table = new QTableWidget(0, 4, this);
     table->setHorizontalHeaderLabels({"ID", "Metric Name", "Date", "Value"});
     table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -155,7 +148,6 @@ void HealthMetricsTab::setupUI()
     table->setShowGrid(false);
     root->addWidget(table);
 
-    // ── Action buttons ────────────────────────────────────────────────────────
     auto *btnRow = new QHBoxLayout;
     btnRow->addStretch();
 
@@ -177,7 +169,6 @@ void HealthMetricsTab::setupUI()
     refresh();
 }
 
-// ── refresh ───────────────────────────────────────────────────────────────────
 void HealthMetricsTab::refresh()
 {
     table->setRowCount(0);
@@ -204,7 +195,6 @@ void HealthMetricsTab::refresh()
             if (!name.contains(keyword, Qt::CaseInsensitive)) continue;
         }
 
-        // ── Insert row ────────────────────────────────────────────────────────
         int row = table->rowCount();
         table->insertRow(row);
 
@@ -221,7 +211,6 @@ void HealthMetricsTab::refresh()
     }
 }
 
-// ── onDelete ─────────────────────────────────────────────────────────────────
 void HealthMetricsTab::onDelete()
 {
     int row = table->currentRow();
@@ -238,7 +227,6 @@ void HealthMetricsTab::onDelete()
     }
 }
 
-// ── onEdit ────────────────────────────────────────────────────────────────────
 // Pre-fills from the selected HealthMetric and applies changes via setters.
 // HealthMetric has no subclasses so the dialog is always the same shape.
 void HealthMetricsTab::onEdit()
@@ -265,7 +253,6 @@ void HealthMetricsTab::onEdit()
         return;
     }
 
-    // ── Build pre-filled dialog ───────────────────────────────────────────────
     QDialog dlg(this);
     dlg.setWindowTitle("Edit Metric  [" + QString::fromStdString(id) + "]");
     dlg.setFixedWidth(320);
@@ -298,7 +285,6 @@ void HealthMetricsTab::onEdit()
 
     if (dlg.exec() != QDialog::Accepted) return;
 
-    // ── Validate ──────────────────────────────────────────────────────────────
     if (nameEdit->text().trimmed().isEmpty()) {
         QMessageBox::warning(this, "Validation", "Metric name cannot be empty.");
         return;
@@ -308,7 +294,6 @@ void HealthMetricsTab::onEdit()
         return;
     }
 
-    // ── Apply via setters ─────────────────────────────────────────────────────
     target->setName(nameEdit->text().trimmed().toStdString());
     target->setValue(valSpin->value());
     target->setDate(dateEdit->dateTime());
@@ -316,7 +301,6 @@ void HealthMetricsTab::onEdit()
     refresh();
 }
 
-// ── onAdd ─────────────────────────────────────────────────────────────────────
 void HealthMetricsTab::onAdd()
 {
     QDialog dlg(this);

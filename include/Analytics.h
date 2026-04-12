@@ -23,8 +23,6 @@ class Analytics
 public:
     Analytics() = default;
 
-    // ── Declarations + definitions (all in one place for templates) ───────────
-
     // Sums the duration of every Workout-derived log in the vector.
     double computeTotalWorkoutTime(const std::vector<T *> &logs) const
     {

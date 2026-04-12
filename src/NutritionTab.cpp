@@ -33,21 +33,18 @@ static std::string newID()
     return QUuid::createUuid().toString(QUuid::WithoutBraces).left(6).toStdString();
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
 NutritionTab::NutritionTab(LogManager &lm, QWidget *parent)
     : QWidget(parent), logManager(lm)
 {
     setupUI();
 }
 
-// ── setupUI ───────────────────────────────────────────────────────────────────
 void NutritionTab::setupUI()
 {
     auto *root = new QVBoxLayout(this);
     root->setContentsMargins(20, 20, 20, 16);
     root->setSpacing(10);
 
-    // ── Row 1: Heading + description search ───────────────────────────────────
     auto *topRow = new QHBoxLayout;
 
     auto *heading = new QLabel("NUTRITION LOG");
@@ -60,16 +57,13 @@ void NutritionTab::setupUI()
     searchBar->setFixedWidth(220);
     connect(searchBar, &QLineEdit::textChanged, this, &NutritionTab::refresh);
     topRow->addWidget(searchBar);
-
     root->addLayout(topRow);
 
-    // ── Separator ─────────────────────────────────────────────────────────────
     auto *sep1 = new QFrame;
     sep1->setFrameShape(QFrame::HLine);
     sep1->setStyleSheet("color:#333;");
     root->addWidget(sep1);
 
-    // ── Row 2: Filter bar ─────────────────────────────────────────────────────
     auto *filterRow = new QHBoxLayout;
     filterRow->setSpacing(8);
 
@@ -155,13 +149,11 @@ void NutritionTab::setupUI()
     filterRow->addStretch();
     root->addLayout(filterRow);
 
-    // ── Separator ─────────────────────────────────────────────────────────────
     auto *sep2 = new QFrame;
     sep2->setFrameShape(QFrame::HLine);
     sep2->setStyleSheet("color:#333;");
     root->addWidget(sep2);
 
-    // ── Table ─────────────────────────────────────────────────────────────────
     // Columns: ID | Date | Title | Description | Meal Type | Calories | Macros
     table = new QTableWidget(0, 7, this);
     table->setHorizontalHeaderLabels({
@@ -176,7 +168,6 @@ void NutritionTab::setupUI()
     table->setShowGrid(false);
     root->addWidget(table);
 
-    // ── Action buttons ────────────────────────────────────────────────────────
     auto *btnRow = new QHBoxLayout;
     btnRow->addStretch();
 
@@ -198,7 +189,6 @@ void NutritionTab::setupUI()
     refresh();
 }
 
-// ── refresh ───────────────────────────────────────────────────────────────────
 // Applies all three filters and repopulates the table.
 void NutritionTab::refresh()
 {
@@ -246,7 +236,6 @@ void NutritionTab::refresh()
                 continue;
         }
 
-        // ── Insert row ────────────────────────────────────────────────────────
         int row = table->rowCount();
         table->insertRow(row);
 
@@ -281,7 +270,6 @@ void NutritionTab::refresh()
     }
 }
 
-// ── onDelete ─────────────────────────────────────────────────────────────────
 void NutritionTab::onDelete()
 {
     int row = table->currentRow();
@@ -298,7 +286,6 @@ void NutritionTab::onDelete()
     }
 }
 
-// ── onEdit ────────────────────────────────────────────────────────────────────
 // Pre-fills all fields from the selected Nutrition object and applies changes
 // via setters — no re-creation, so the log ID and list position are preserved.
 void NutritionTab::onEdit()
@@ -324,7 +311,6 @@ void NutritionTab::onEdit()
         return;
     }
 
-    // ── Build pre-filled dialog ───────────────────────────────────────────────
     QDialog dlg(this);
     dlg.setWindowTitle("Edit Meal  [" + QString::fromStdString(id) + "]");
     dlg.setFixedWidth(380);
@@ -397,13 +383,11 @@ void NutritionTab::onEdit()
 
     if (dlg.exec() != QDialog::Accepted) return;
 
-    // ── Validate ──────────────────────────────────────────────────────────────
     if (descEdit->text().trimmed().isEmpty()) {
         QMessageBox::warning(this, "Validation", "Description cannot be empty.");
         return;
     }
 
-    // ── Apply via setters ─────────────────────────────────────────────────────
     target->setTitle(titleEdit->text().trimmed().toStdString());
     target->setDescription(descEdit->text().trimmed().toStdString());
     target->setDate(dateEdit->dateTime());
@@ -426,7 +410,6 @@ void NutritionTab::onEdit()
     refresh();
 }
 
-// ── onAdd ─────────────────────────────────────────────────────────────────────
 void NutritionTab::onAdd()
 {
     QDialog dlg(this);

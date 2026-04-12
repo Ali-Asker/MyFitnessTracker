@@ -10,15 +10,14 @@ enum class MealType {
 		Dinner,
 		Snack
 };
-
 class Nutrition : public Log {
 private:
 	MealType mealType;
 	double caloriesConsumed;
-	double protein;   // grams
-	double carbs;     // grams
-	double fats;      // grams
-	double sugar;     // grams
+	double protein;   
+	double carbs;     
+	double fats;      
+	double sugar;    
 	std::string title;
 
 public:

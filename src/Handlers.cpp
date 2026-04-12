@@ -245,4 +245,3 @@ void Handlers::navigateToPage(int pageIndex) {
     qDebug() << "Navigation requested to page:" << pageIndex;
     emit navigationRequested(pageIndex);
 }
-

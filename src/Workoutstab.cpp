@@ -35,27 +35,21 @@
 #include <QUuid>
 #include <unordered_set>
 
-// ── Helper: generate a short unique 6-char log ID ────────────────────────────
 static std::string newID()
 {
     return QUuid::createUuid().toString(QUuid::WithoutBraces).left(6).toStdString();
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
 WorkoutsTab::WorkoutsTab(LogManager &lm, QWidget *parent)
     : QWidget(parent), logManager(lm)
 {
     setupUI();
 }
 
-// ── setupUI ───────────────────────────────────────────────────────────────────
 void WorkoutsTab::setupUI()
 {
     auto *root = new QVBoxLayout(this);
     root->setContentsMargins(20, 20, 20, 16);
     root->setSpacing(10);
-
-    // ── Row 1: Heading + description search ───────────────────────────────────
     auto *topRow = new QHBoxLayout;
 
     auto *heading = new QLabel("WORKOUT LOG");
@@ -72,13 +66,11 @@ void WorkoutsTab::setupUI()
 
     root->addLayout(topRow);
 
-    // ── Separator ─────────────────────────────────────────────────────────────
     auto *sep1 = new QFrame;
     sep1->setFrameShape(QFrame::HLine);
     sep1->setStyleSheet("color:#333;");
     root->addWidget(sep1);
 
-    // ── Row 2: Filter bar ─────────────────────────────────────────────────────
     // Layout: [Type label] [combo] [spacing] [checkbox] [From label] [date] [To label] [date] [Apply] [Clear]
     auto *filterRow = new QHBoxLayout;
     filterRow->setSpacing(8);
@@ -169,13 +161,11 @@ void WorkoutsTab::setupUI()
     filterRow->addStretch();
     root->addLayout(filterRow);
 
-    // ── Separator ─────────────────────────────────────────────────────────────
     auto *sep2 = new QFrame;
     sep2->setFrameShape(QFrame::HLine);
     sep2->setStyleSheet("color:#333;");
     root->addWidget(sep2);
 
-    // ── Table ─────────────────────────────────────────────────────────────────
     // Columns: ID | Date | Description | Duration | Type | Calories | Details
     table = new QTableWidget(0, 7, this);
     table->setHorizontalHeaderLabels({
@@ -190,7 +180,6 @@ void WorkoutsTab::setupUI()
     table->setShowGrid(false);
     root->addWidget(table);
 
-    // ── Action buttons (bottom-right) ─────────────────────────────────────────
     auto *btnRow = new QHBoxLayout;
     btnRow->addStretch();
 
@@ -213,7 +202,6 @@ void WorkoutsTab::setupUI()
     refresh();
 }
 
-// ── refresh ───────────────────────────────────────────────────────────────────
 // Applies all three filters (keyword, type, date) and repopulates the table.
 //
 // Strategy:
@@ -230,8 +218,6 @@ void WorkoutsTab::refresh()
     table->setRowCount(0);
 
     const QString keyword = searchBar->text().trimmed();
-
-    // ── Build optional filter sets ────────────────────────────────────────────
 
     // Type filter: non-zero index means a specific type is chosen
     bool typeActive = (typeFilter->currentIndex() != 0);
@@ -270,7 +256,6 @@ void WorkoutsTab::refresh()
             dateSet.insert(l->getLogID());
     }
 
-    // ── Populate table ────────────────────────────────────────────────────────
     for (const auto &log : logManager.getLogs()) {
         // Only show Workout-derived entries
         Workout *w = dynamic_cast<Workout *>(log.get());
@@ -290,7 +275,6 @@ void WorkoutsTab::refresh()
             if (!desc.contains(keyword, Qt::CaseInsensitive)) continue;
         }
 
-        // ── Insert a row ──────────────────────────────────────────────────────
         int row = table->rowCount();
         table->insertRow(row);
 
@@ -328,7 +312,6 @@ void WorkoutsTab::refresh()
     }
 }
 
-// ── onDelete ─────────────────────────────────────────────────────────────────
 void WorkoutsTab::onDelete()
 {
     int row = table->currentRow();
@@ -346,7 +329,6 @@ void WorkoutsTab::onDelete()
     }
 }
 
-// ── onEdit ────────────────────────────────────────────────────────────────────
 // Opens a pre-filled dialog for the selected workout.
 // Only the fields that are common to all workouts (date, duration, description,
 // calories) are editable here; type-specific fields (distance, weight, etc.)
@@ -381,7 +363,6 @@ void WorkoutsTab::onEdit()
         return;
     }
 
-    // ── Build the edit dialog ─────────────────────────────────────────────────
     QDialog dlg(this);
     dlg.setWindowTitle("Edit Workout  [" + QString::fromStdString(id) + "]");
     dlg.setFixedWidth(420);
@@ -413,7 +394,6 @@ void WorkoutsTab::onEdit()
     form->addRow("Duration",        durSpin);
     form->addRow("Calories Burned", calSpin);
 
-    // ── Subtype-specific fields ───────────────────────────────────────────────
     // We detect the concrete subtype and add only the relevant fields.
 
     // Cardio – Distance
@@ -461,7 +441,6 @@ void WorkoutsTab::onEdit()
         form->addRow("Intensity", intEdit);
     }
 
-    // ── Buttons ───────────────────────────────────────────────────────────────
     auto *buttons = new QDialogButtonBox(QDialogButtonBox::Save |
                                          QDialogButtonBox::Cancel);
     connect(buttons, &QDialogButtonBox::accepted, &dlg, &QDialog::accept);
@@ -470,7 +449,6 @@ void WorkoutsTab::onEdit()
 
     if (dlg.exec() != QDialog::Accepted) return;
 
-    // ── Validate ──────────────────────────────────────────────────────────────
     if (descEdit->text().trimmed().isEmpty()) {
         QMessageBox::warning(this, "Validation", "Description cannot be empty.");
         return;
@@ -480,7 +458,6 @@ void WorkoutsTab::onEdit()
         return;
     }
 
-    // ── Apply changes via setters (no re-creation needed) ─────────────────────
     // Setters are defined in the base Workout/Log classes and all subclasses.
     target->setDescription(descEdit->text().trimmed().toStdString());
     target->setDate(dateEdit->dateTime());
@@ -508,7 +485,6 @@ void WorkoutsTab::onEdit()
     refresh(); // repaint the table to show updated values
 }
 
-// ── onAdd ─────────────────────────────────────────────────────────────────────
 // Dialog shows different fields depending on the selected workout type.
 // Only the relevant fields are visible at any time (show/hide on combo change).
 void WorkoutsTab::onAdd()
@@ -521,7 +497,6 @@ void WorkoutsTab::onAdd()
     form->setSpacing(10);
     form->setContentsMargins(20, 20, 20, 20);
 
-    // ── Common fields ─────────────────────────────────────────────────────────
     auto *typeCombo = new QComboBox;
     typeCombo->addItems({"Cardio – Distance", "Cardio – Reps", "Strength", "Yoga"});
 
@@ -546,8 +521,6 @@ void WorkoutsTab::onAdd()
     form->addRow("Date / Time",     dateEdit);
     form->addRow("Duration",        durSpin);
     form->addRow("Calories Burned", calSpin);
-
-    // ── Type-specific fields ──────────────────────────────────────────────────
 
     // Cardio – Distance
     auto *distLabel = new QLabel("Distance (km)");
@@ -599,7 +572,6 @@ void WorkoutsTab::onAdd()
     connect(typeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), updateFields);
     updateFields(0);
 
-    // ── OK / Cancel ───────────────────────────────────────────────────────────
     auto *buttons = new QDialogButtonBox(QDialogButtonBox::Ok |
                                          QDialogButtonBox::Cancel);
     connect(buttons, &QDialogButtonBox::accepted, &dlg, &QDialog::accept);
@@ -608,7 +580,6 @@ void WorkoutsTab::onAdd()
 
     if (dlg.exec() != QDialog::Accepted) return;
 
-    // ── Validation ────────────────────────────────────────────────────────────
     if (descEdit->text().trimmed().isEmpty()) {
         QMessageBox::warning(this, "Validation", "Description cannot be empty.");
         return;
@@ -618,7 +589,6 @@ void WorkoutsTab::onAdd()
         return;
     }
 
-    // ── Build the concrete subtype and hand it to LogManager ─────────────────
     std::string id   = newID();
     std::string desc = descEdit->text().trimmed().toStdString();
     QDateTime   date = dateEdit->dateTime();

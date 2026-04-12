@@ -1,4 +1,3 @@
-// File author: Shane
 #include "Workout.h"
 #include <QDebug>
 #include <string>

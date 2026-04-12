@@ -1,4 +1,3 @@
-// File author: Shane
 #include "Log.h"
 #include <QDateTime>
 #include <QDebug>

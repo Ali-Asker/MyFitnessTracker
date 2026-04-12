@@ -11,7 +11,6 @@
 #pragma once
 
 #include "LogManager.h"
-
 #include <QWidget>
 #include <QTableWidget>
 #include <QLineEdit>
@@ -32,13 +31,11 @@ public:
 
 private slots:
     void onAdd();
-    void onEdit();      // NEW – edit selected row in-place via dialog
+    void onEdit();     
     void onDelete();
 
 private:
     void setupUI();
-
-    // ── Widgets ───────────────────────────────────────────────────────────────
     QTableWidget *table      = nullptr;
 
     // Search / filter bar
@@ -50,9 +47,7 @@ private:
 
     // Action buttons
     QPushButton  *addBtn    = nullptr;
-    QPushButton  *editBtn   = nullptr;    // NEW
+    QPushButton  *editBtn   = nullptr;    
     QPushButton  *deleteBtn = nullptr;
-
-    // ── Data ──────────────────────────────────────────────────────────────────
     LogManager &logManager;
 };

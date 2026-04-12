@@ -37,19 +37,15 @@ private slots:
 private:
     void setupUI();
 
-    // ── Data ──────────────────────────────────────────────────────────────────
     LogManager &logManager;
-
-    // ── Widgets ───────────────────────────────────────────────────────────────
     QTableWidget *table         = nullptr;
 
     // Search / filter bar
-    QLineEdit    *searchBar     = nullptr;   // live description search
-    QComboBox    *mealFilter    = nullptr;   // All | Breakfast | Lunch | Dinner | Snack
+    QLineEdit    *searchBar     = nullptr;   
+    QComboBox    *mealFilter    = nullptr;   
     QDateEdit    *fromDate      = nullptr;
     QDateEdit    *toDate        = nullptr;
     QCheckBox    *useDateFilter = nullptr;
-
     // Action buttons
     QPushButton  *addBtn    = nullptr;
     QPushButton  *editBtn   = nullptr;

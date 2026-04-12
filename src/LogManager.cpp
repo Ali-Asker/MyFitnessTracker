@@ -1,4 +1,3 @@
-// File author: Shane/Phinees/Josh
 #include "LogManager.h"
 #include "Nutrition.h" // required for dynamic_cast<Nutrition*> in filterByType
 #include "Workout.h"   // required for dynamic_cast<Workout*> in filterByType

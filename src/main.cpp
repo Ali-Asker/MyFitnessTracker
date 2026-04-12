@@ -14,15 +14,15 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    // ── Show the splash first ─────────────────────────────────────────────────
+    // Show the splash first 
     SplashScreen splash;
     splash.show();
 
-    // ── Create the main window but don't show it yet ──────────────────────────
+    // Create the main window but don't show it yet
     // We heap-allocate so it outlives this scope after the lambda captures it.
     MainWindow *window = new MainWindow();
 
-    // ── When the splash finishes, open the main window ────────────────────────
+    // When the splash finishes, open the main window
     // Qt::QueuedConnection ensures the splash's timer has fully stopped before
     // we do the window switch (avoids a brief flicker on some platforms).
     QObject::connect(

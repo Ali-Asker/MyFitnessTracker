@@ -11,7 +11,7 @@
 #include "CardioWorkout.h"
 
 /**
- * @brief Handlers class - Bridge between QML UI and C++ backend
+ * Handlers class - Bridge between QML UI and C++ backend
  * 
  * This class connects the QML interface to your existing backend classes:
  * - LogManager: Manages all logs (Nutrition, Workouts)
@@ -133,4 +133,3 @@ private:
     int m_totalWorkoutDuration = 0;
     int m_totalCaloriesBurned = 0;
 };
-

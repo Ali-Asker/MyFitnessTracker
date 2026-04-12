@@ -1,4 +1,3 @@
-// file author: Shane
 #pragma once
 #include <string>
 #include <QDateTime>

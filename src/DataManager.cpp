@@ -14,9 +14,6 @@
 using namespace std;
 using json = nlohmann::json;
 
-// ─────────────────────────────────────────────────────────────────────────────
-// saveData
-// ─────────────────────────────────────────────────────────────────────────────
 // Serialises every log and health metric in the LogManager to a JSON file.
 // The runtime type of each log is detected via dynamic_cast so the correct
 // subtype fields are included in the JSON object.
@@ -92,9 +89,6 @@ void DataManager::saveData(const string &filename, const LogManager &logManager)
     file << output.dump(4);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// loadData
-// ─────────────────────────────────────────────────────────────────────────────
 // Reads a JSON file produced by saveData(), clears the LogManager, then
 // reconstructs every log and health metric.
 // Throws std::runtime_error on file-open failure or malformed JSON.
@@ -184,9 +178,6 @@ void DataManager::loadData(const string &filename, LogManager &logManager) const
     }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// exportSummary
-// ─────────────────────────────────────────────────────────────────────────────
 // Writes a human-readable plain-text summary report to `filename`.
 //
 // The report contains four sections:
@@ -205,16 +196,13 @@ void DataManager::exportSummary(const string &filename, const LogManager &logMan
     if (!out.is_open())
         throw runtime_error("exportSummary: could not open file for writing: " + filename);
 
-    // ── Helper: horizontal rule ───────────────────────────────────────────────
     auto hr = [&](char c = '-', int w = 72) {
         out << string(w, c) << "\n";
     };
 
-    // ── Timestamp ─────────────────────────────────────────────────────────────
     std::string generated =
         QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss").toStdString();
 
-    // ── Collect summary data ──────────────────────────────────────────────────
     int    totalWorkouts   = 0;
     int    totalMeals      = 0;
     double totalDuration   = 0.0;
@@ -234,14 +222,12 @@ void DataManager::exportSummary(const string &filename, const LogManager &logMan
     }
     double netCalories = totalConsumed - totalBurned;
 
-    // ── Header ────────────────────────────────────────────────────────────────
     hr('=');
     out << "  MyFitnessTracker — Data Export Summary\n";
     out << "  Generated: " << generated << "\n";
     hr('=');
     out << "\n";
 
-    // ── Section 1: Overview ───────────────────────────────────────────────────
     out << "OVERVIEW\n";
     hr();
     out << left << setw(30) << "Total workout sessions:"  << totalWorkouts   << "\n";
@@ -259,7 +245,6 @@ void DataManager::exportSummary(const string &filename, const LogManager &logMan
         << logManager.getMetrics().size() << "\n";
     out << "\n";
 
-    // ── Section 2: Workouts ───────────────────────────────────────────────────
     out << "WORKOUTS  (" << totalWorkouts << " entries)\n";
     hr();
 
@@ -317,7 +302,6 @@ void DataManager::exportSummary(const string &filename, const LogManager &logMan
     }
     out << "\n";
 
-    // ── Section 3: Nutrition ──────────────────────────────────────────────────
     out << "NUTRITION  (" << totalMeals << " entries)\n";
     hr();
 
@@ -354,7 +338,6 @@ void DataManager::exportSummary(const string &filename, const LogManager &logMan
     }
     out << "\n";
 
-    // ── Section 4: Health Metrics ─────────────────────────────────────────────
     out << "HEALTH METRICS  (" << logManager.getMetrics().size() << " entries)\n";
     hr();
 

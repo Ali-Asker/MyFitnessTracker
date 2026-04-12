@@ -1,4 +1,3 @@
-// file author: Josh
 #pragma once
 #include "Workout.h"
 #include <iostream>
