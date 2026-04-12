@@ -1,50 +1,54 @@
 // MainWindow.cpp
 // Wires up the four tabs, applies the visual theme,
 // builds the File menu, and handles auto-load on startup.
+//
+// Changes vs. original:
+//   • File menu now has an "Export Summary" action that calls
+//     DataManager::exportSummary() and saves a .txt report.
 
 #include "MainWindow.h"
-#include "AnalyticsTab.h"
-#include "HealthMetricsTab.h"
-#include "NutritionTab.h"
 #include "WorkoutsTab.h"
+#include "NutritionTab.h"
+#include "HealthMetricsTab.h"
+#include "AnalyticsTab.h"
 
 #include <QApplication>
-#include <QDir>
-#include <QFileDialog>
 #include <QMenuBar>
-#include <QMessageBox>
-#include <QStandardPaths>
 #include <QStatusBar>
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QDir>
+#include <QStandardPaths>
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+#include <QDesktopServices>
+#include <QUrl>
+
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
     setWindowTitle("MyFitnessTracker");
     setMinimumSize(900, 600);
     resize(1366, 768);
 
-    // Apply the dark theme before any widgets are created
     applyTheme();
     buildMenuBar();
 
-    // ── Build each tab, passing a reference to the shared LogManager ─────────
-    // All tabs read/write the same LogManager so data stays in sync.
-    tabs = new QTabWidget(this);
-    workoutsTab = new WorkoutsTab(logManager, tabs);
+    // All tabs share the same LogManager so data stays in sync.
+    tabs         = new QTabWidget(this);
+    workoutsTab  = new WorkoutsTab(logManager, tabs);
     nutritionTab = new NutritionTab(logManager, tabs);
-    metricsTab = new HealthMetricsTab(logManager, tabs);
+    metricsTab   = new HealthMetricsTab(logManager, tabs);
     analyticsTab = new AnalyticsTab(logManager, tabs);
 
-    tabs->addTab(workoutsTab, "Workouts");
+    tabs->addTab(workoutsTab,  "Workouts");
     tabs->addTab(nutritionTab, "Nutrition");
-    tabs->addTab(metricsTab, "Health Metrics");
+    tabs->addTab(metricsTab,   "Health Metrics");
     tabs->addTab(analyticsTab, "Analytics");
 
     setCentralWidget(tabs);
     statusBar()->showMessage("Ready");
 
-    // Refresh the Analytics tab each time the user switches to it,
-    // so numbers always reflect the latest data
+    // Refresh Analytics tab whenever the user switches to it so numbers
+    // always reflect the latest data without requiring a manual refresh.
     connect(tabs, &QTabWidget::currentChanged, this, [this](int idx) {
         if (tabs->widget(idx) == analyticsTab)
             analyticsTab->refresh();
@@ -59,36 +63,42 @@ void MainWindow::buildMenuBar()
 {
     QMenu *file = menuBar()->addMenu("&File");
 
+    // Save
     auto *saveAct = file->addAction("&Save");
     saveAct->setShortcut(QKeySequence::Save);
     connect(saveAct, &QAction::triggered, this, &MainWindow::onSave);
 
+    // Load
     auto *loadAct = file->addAction("&Load");
     loadAct->setShortcut(QKeySequence::Open);
     connect(loadAct, &QAction::triggered, this, &MainWindow::onLoad);
 
     file->addSeparator();
 
+    // Export Summary — produces a human-readable .txt report
+    auto *exportAct = file->addAction("&Export Summary...");
+    exportAct->setShortcut(QKeySequence("Ctrl+E"));
+    connect(exportAct, &QAction::triggered, this, &MainWindow::onExportSummary);
+
+    file->addSeparator();
+
+    // Quit
     auto *quitAct = file->addAction("&Quit");
     quitAct->setShortcut(QKeySequence::Quit);
     connect(quitAct, &QAction::triggered, qApp, &QApplication::quit);
 }
 
+// ── onSave ────────────────────────────────────────────────────────────────────
 void MainWindow::onSave()
 {
-    // Open the native Save dialog, starting in the user's Documents folder.
-    // getSaveFileName returns an empty string if the user cancels — we bail out.
-    QString path
-        = QFileDialog::getSaveFileName(this,
-                                       "Save Fitness Data",              // dialog title
-                                       QStandardPaths::writableLocation( // default directory
-                                           QStandardPaths::DocumentsLocation)
-                                           + "/fitness_logs.json",
-                                       "JSON Files (*.json);;All Files (*)" // file type filter
-        );
+    QString path = QFileDialog::getSaveFileName(
+        this,
+        "Save Fitness Data",
+        QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + "/fitness_logs.json",
+        "JSON Files (*.json);;All Files (*)");
 
-    if (path.isEmpty())
-        return; // user cancelled — do nothing
+    if (path.isEmpty()) return;
 
     try {
         dataManager.saveData(path.toStdString(), logManager);
@@ -98,24 +108,19 @@ void MainWindow::onSave()
     }
 }
 
+// ── onLoad ────────────────────────────────────────────────────────────────────
 void MainWindow::onLoad()
 {
-    // Open the native Open dialog, starting in the user's Documents folder.
-    // getOpenFileName returns an empty string if the user cancels.
-    QString path
-        = QFileDialog::getOpenFileName(this,
-                                       "Load Fitness Data",              // dialog title
-                                       QStandardPaths::writableLocation( // default directory
-                                           QStandardPaths::DocumentsLocation),
-                                       "JSON Files (*.json);;All Files (*)" // file type filter
-        );
+    QString path = QFileDialog::getOpenFileName(
+        this,
+        "Load Fitness Data",
+        QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation),
+        "JSON Files (*.json);;All Files (*)");
 
-    if (path.isEmpty())
-        return; // user cancelled — do nothing
+    if (path.isEmpty()) return;
 
     try {
         dataManager.loadData(path.toStdString(), logManager);
-        // Refresh all tabs so they show the newly loaded data
         workoutsTab->refresh();
         nutritionTab->refresh();
         metricsTab->refresh();
@@ -126,22 +131,49 @@ void MainWindow::onLoad()
     }
 }
 
-// ── Theme ─────────────────────────────────────────────────────────────────────
-// One stylesheet applied to the whole app via qApp.
-// Uses Fusion style as the base (cross-platform, clean) then overrides colours.
+// ── onExportSummary ───────────────────────────────────────────────────────────
+// Opens a "Save As" dialog and writes a plain-text summary report.
+// The report is generated by DataManager::exportSummary(), which formats
+// all workouts, meals, and health metrics into readable fixed-width columns.
+void MainWindow::onExportSummary()
+{
+    QString path = QFileDialog::getSaveFileName(
+        this,
+        "Export Summary Report",
+        QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + "/fitness_summary.txt",
+        "Text Files (*.txt);;All Files (*)");
 
+    if (path.isEmpty()) return;
+
+    try {
+        dataManager.exportSummary(path.toStdString(), logManager);
+        statusBar()->showMessage("Summary exported to " + path);
+
+        // Offer to open the file with the system's default text viewer
+        auto btn = QMessageBox::information(
+            this,
+            "Export Complete",
+            "Summary report saved to:\n" + path + "\n\nWould you like to open it?",
+            QMessageBox::Open | QMessageBox::Close);
+
+        if (btn == QMessageBox::Open)
+            QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+
+    } catch (const std::exception &e) {
+        QMessageBox::critical(this, "Export Error", e.what());
+    }
+}
+
+// ── applyTheme ────────────────────────────────────────────────────────────────
 void MainWindow::applyTheme()
 {
     qApp->setStyle("Fusion");
 
     qApp->setStyleSheet(R"(
-
-        /* ── Window & dialogs ───────────────────────── */
         QMainWindow, QDialog {
             background-color: #1e1e1e;
         }
-
-        /* ── Menu bar ───────────────────────────────── */
         QMenuBar {
             background-color: #2a2a2a;
             color: #dddddd;
@@ -163,16 +195,12 @@ void MainWindow::applyTheme()
             background-color: #39FF14;
             color: #111;
         }
-
-        /* ── Status bar ─────────────────────────────── */
         QStatusBar {
             background-color: #2a2a2a;
             color: #888;
             border-top: 1px solid #3a3a3a;
             font-size: 12px;
         }
-
-        /* ── Tab bar ────────────────────────────────── */
         QTabWidget::pane {
             border: none;
             background-color: #1e1e1e;
@@ -195,8 +223,6 @@ void MainWindow::applyTheme()
             color: #dddddd;
             background-color: #333;
         }
-
-        /* ── Primary button (green) ─────────────────── */
         QPushButton {
             background-color: #39FF14;
             color: #111111;
@@ -207,18 +233,15 @@ void MainWindow::applyTheme()
             font-weight: 600;
             min-width: 90px;
         }
-        QPushButton:hover  { background-color: #2ecc71; }
+        QPushButton:hover   { background-color: #2ecc71; }
         QPushButton:pressed { background-color: #27ae60; }
-
-        /* ── Danger button (red) — set objectName="danger" ── */
         QPushButton#danger {
             background-color: #c0392b;
             color: #ffffff;
         }
-        QPushButton#danger:hover  { background-color: #e74c3c; }
-
-        /* ── Text inputs ────────────────────────────── */
-        QLineEdit, QSpinBox, QDoubleSpinBox, QDateTimeEdit, QComboBox {
+        QPushButton#danger:hover { background-color: #e74c3c; }
+        QLineEdit, QSpinBox, QDoubleSpinBox, QDateTimeEdit,
+        QDateEdit, QComboBox {
             background-color: #2d2d2d;
             color: #dddddd;
             border: 1px solid #3a3a3a;
@@ -227,8 +250,18 @@ void MainWindow::applyTheme()
             font-size: 13px;
         }
         QLineEdit:focus, QSpinBox:focus, QDoubleSpinBox:focus,
-        QDateTimeEdit:focus, QComboBox:focus {
+        QDateTimeEdit:focus, QDateEdit:focus, QComboBox:focus {
             border: 1px solid #39FF14;
+        }
+        QCheckBox { color: #aaa; font-size: 12px; }
+        QCheckBox::indicator {
+            width: 14px; height: 14px;
+            border: 1px solid #555; border-radius: 3px;
+            background: #2d2d2d;
+        }
+        QCheckBox::indicator:checked {
+            background: #39FF14;
+            border-color: #39FF14;
         }
         QComboBox QAbstractItemView {
             background-color: #2a2a2a;
@@ -237,8 +270,6 @@ void MainWindow::applyTheme()
             selection-background-color: #39FF14;
             selection-color: #111;
         }
-
-        /* ── Table ──────────────────────────────────── */
         QTableWidget {
             background-color: #242424;
             color: #dddddd;
@@ -260,53 +291,37 @@ void MainWindow::applyTheme()
             font-weight: 700;
             letter-spacing: 1px;
         }
-        /* Thin scrollbar */
         QScrollBar:vertical {
-            background: #242424;
-            width: 6px;
-            border: none;
+            background: #242424; width: 6px; border: none;
         }
         QScrollBar::handle:vertical {
-            background: #3a3a3a;
-            border-radius: 3px;
+            background: #3a3a3a; border-radius: 3px;
         }
         QScrollBar::handle:vertical:hover { background: #39FF14; }
         QScrollBar::add-line:vertical,
         QScrollBar::sub-line:vertical { height: 0; }
-
-        /* ── Labels ─────────────────────────────────── */
         QLabel { color: #dddddd; font-size: 13px; }
-
-        /* Section heading — set objectName="heading" */
         QLabel#heading {
             color: #39FF14;
             font-size: 16px;
             font-weight: 700;
             letter-spacing: 2px;
         }
-
-        /* Large number inside a stat card — set objectName="statNum" */
         QLabel#statNum {
             color: #39FF14;
             font-size: 30px;
             font-weight: 700;
         }
-
-        /* Small caption — set objectName="caption" */
         QLabel#caption {
             color: #666;
             font-size: 11px;
             letter-spacing: 1px;
         }
-
-        /* ── Stat card (QFrame) — set objectName="card" ── */
         QFrame#card {
             background-color: #242424;
             border: 1px solid #333;
             border-radius: 8px;
         }
-
-        /* ── Progress bar ───────────────────────────── */
         QProgressBar {
             background-color: #2d2d2d;
             border: 1px solid #3a3a3a;
@@ -320,10 +335,7 @@ void MainWindow::applyTheme()
             background-color: #39FF14;
             border-radius: 4px;
         }
-
-        /* ── Form dialog ────────────────────────────── */
         QDialog { background-color: #242424; }
         QFormLayout QLabel { color: #aaa; font-size: 12px; }
-
     )");
 }

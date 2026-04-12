@@ -1,16 +1,23 @@
 // NutritionTab.h
 // Displays all nutrition logs in a table.
-// Lets the user add a meal entry or delete a selected row.
-// Supports live search by description keyword.
+// Supports:
+//   - Live description search
+//   - MealType filter  (All | Breakfast | Lunch | Dinner | Snack)
+//   - Date-range filter (checkbox + From / To pickers)
+//   - Add / Edit / Delete actions
+//   - Full macro fields (protein, carbs, fats, sugar, title) in Add/Edit dialogs
 
 #pragma once
+
+#include "LogManager.h"
 
 #include <QWidget>
 #include <QTableWidget>
 #include <QLineEdit>
+#include <QComboBox>
+#include <QDateEdit>
 #include <QPushButton>
-
-#include "LogManager.h"
+#include <QCheckBox>
 
 class NutritionTab : public QWidget
 {
@@ -23,16 +30,28 @@ public:
     void refresh();
 
 private slots:
-    void onAdd();    // Opens the "Add Meal" dialog
-    void onDelete(); // Deletes the currently selected row
+    void onAdd();
+    void onEdit();
+    void onDelete();
 
 private:
     void setupUI();
 
-    LogManager   &logManager;
+    // ── Data ──────────────────────────────────────────────────────────────────
+    LogManager &logManager;
 
-    QTableWidget *table;
-    QLineEdit    *searchBar;
-    QPushButton  *addBtn;
-    QPushButton  *deleteBtn;
+    // ── Widgets ───────────────────────────────────────────────────────────────
+    QTableWidget *table         = nullptr;
+
+    // Search / filter bar
+    QLineEdit    *searchBar     = nullptr;   // live description search
+    QComboBox    *mealFilter    = nullptr;   // All | Breakfast | Lunch | Dinner | Snack
+    QDateEdit    *fromDate      = nullptr;
+    QDateEdit    *toDate        = nullptr;
+    QCheckBox    *useDateFilter = nullptr;
+
+    // Action buttons
+    QPushButton  *addBtn    = nullptr;
+    QPushButton  *editBtn   = nullptr;
+    QPushButton  *deleteBtn = nullptr;
 };

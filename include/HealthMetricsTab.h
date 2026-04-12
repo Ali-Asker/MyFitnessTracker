@@ -1,14 +1,20 @@
 // HealthMetricsTab.h
-// Displays all health metric entries (weight, heart rate, etc.) in a table.
-// Lets the user add a new metric or delete a selected row.
+// Displays all health metric entries in a table.
+// Supports:
+//   - Live metric name search
+//   - Date-range filter (checkbox + From / To pickers)
+//   - Add / Edit / Delete actions
 
 #pragma once
 
+#include "LogManager.h"
+
 #include <QWidget>
 #include <QTableWidget>
+#include <QLineEdit>
+#include <QDateEdit>
 #include <QPushButton>
-
-#include "LogManager.h"
+#include <QCheckBox>
 
 class HealthMetricsTab : public QWidget
 {
@@ -21,15 +27,27 @@ public:
     void refresh();
 
 private slots:
-    void onAdd();    // Opens the "Add Metric" dialog
-    void onDelete(); // Deletes the currently selected row
+    void onAdd();
+    void onEdit();
+    void onDelete();
 
 private:
     void setupUI();
 
-    LogManager   &logManager;
+    // ── Data ──────────────────────────────────────────────────────────────────
+    LogManager &logManager;
 
-    QTableWidget *table;
-    QPushButton  *addBtn;
-    QPushButton  *deleteBtn;
+    // ── Widgets ───────────────────────────────────────────────────────────────
+    QTableWidget *table         = nullptr;
+
+    // Search / filter bar
+    QLineEdit    *searchBar     = nullptr;   // live metric name / value search
+    QDateEdit    *fromDate      = nullptr;
+    QDateEdit    *toDate        = nullptr;
+    QCheckBox    *useDateFilter = nullptr;
+
+    // Action buttons
+    QPushButton  *addBtn    = nullptr;
+    QPushButton  *editBtn   = nullptr;
+    QPushButton  *deleteBtn = nullptr;
 };

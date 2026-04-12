@@ -1,44 +1,58 @@
-#ifndef WORKOUTSTAB_H
-#define WORKOUTSTAB_H
-
 // WorkoutsTab.h
-// Displays all workout logs in a table.
-// Lets the user add a new workout (via a dialog) or delete a selected row.
-// Also supports live search by description keyword.
+// Table of all workouts with:
+//   - Live description search
+//   - Type filter  (All | Cardio | Strength | Yoga)
+//   - Date-range filter (From … To)
+//   - Add / Edit / Delete actions
+//
+// Filter logic delegates to LogManager::filterByType() and
+// LogManager::filterByDate() so the business logic stays in the manager.
 
 #pragma once
+
+#include "LogManager.h"
 
 #include <QWidget>
 #include <QTableWidget>
 #include <QLineEdit>
+#include <QComboBox>
+#include <QDateEdit>
 #include <QPushButton>
-
-#include "LogManager.h"
+#include <QCheckBox>
 
 class WorkoutsTab : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit WorkoutsTab(LogManager &logManager, QWidget *parent = nullptr);
+    explicit WorkoutsTab(LogManager &lm, QWidget *parent = nullptr);
 
-    // Repopulates the table from the current LogManager state.
-    // Call this after any add/delete or after loading from file.
+    // Called by MainWindow after a file load so the table reflects new data
     void refresh();
 
 private slots:
-    void onAdd();     // Opens the "Add Workout" dialog
-    void onDelete();  // Deletes the currently selected row
+    void onAdd();
+    void onEdit();      // NEW – edit selected row in-place via dialog
+    void onDelete();
 
 private:
     void setupUI();
 
-    LogManager   &logManager;  // reference — shared with all other tabs
+    // ── Widgets ───────────────────────────────────────────────────────────────
+    QTableWidget *table      = nullptr;
 
-    QTableWidget *table;
-    QLineEdit    *searchBar;
-    QPushButton  *addBtn;
-    QPushButton  *deleteBtn;
+    // Search / filter bar
+    QLineEdit    *searchBar  = nullptr;   // live description search
+    QComboBox    *typeFilter = nullptr;   // All | Cardio | Strength | Yoga
+    QDateEdit    *fromDate   = nullptr;   // date-range start
+    QDateEdit    *toDate     = nullptr;   // date-range end
+    QCheckBox    *useDateFilter = nullptr; // enable/disable the date range
+
+    // Action buttons
+    QPushButton  *addBtn    = nullptr;
+    QPushButton  *editBtn   = nullptr;    // NEW
+    QPushButton  *deleteBtn = nullptr;
+
+    // ── Data ──────────────────────────────────────────────────────────────────
+    LogManager &logManager;
 };
-
-#endif // WORKOUTSTAB_H

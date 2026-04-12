@@ -26,6 +26,8 @@ public:
 private slots:
     void onSave();   // File > Save
     void onLoad();   // File > Load
+    void onExportSummary();   // ← ADD THIS LINE
+
 
 private:
     // ── Helpers ──────────────────────────────────────────────────────────────
