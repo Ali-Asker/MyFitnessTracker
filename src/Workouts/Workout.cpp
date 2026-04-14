@@ -6,7 +6,6 @@ using namespace std;
 
 namespace {
 	// Helper method to convert enum to string
-	// Author: Shane
 	const char* toString(WorkoutType type)
 	{
 		switch (type) {
